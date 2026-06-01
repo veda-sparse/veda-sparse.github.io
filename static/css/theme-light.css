@@ -1,0 +1,18 @@
+/* =============================================================================
+   theme-light — refinements layered on base.css (which is light by default).
+   Kept intentionally small; swap this <link> for a future theme-dark.css.
+   ============================================================================= */
+body.theme-light{
+  background:
+    radial-gradient(1200px 520px at 50% -160px, #f3fbff 0%, rgba(243,251,255,0) 70%),
+    linear-gradient(180deg,#fcfdff 0%, #ffffff 520px),
+    #ffffff;
+  background-attachment:fixed;
+}
+/* a touch more presence on cards over the white canvas */
+.theme-light .fig,
+.theme-light .component,
+.theme-light .stat,
+.theme-light .abstract__card,
+.theme-light .spec,
+.theme-light .finding{ box-shadow:0 1px 0 rgba(16,24,48,.02), var(--shadow-1); }

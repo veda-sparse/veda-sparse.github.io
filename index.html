@@ -1,0 +1,583 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Veda — Scalable Video Diffusion via Distilled Sparse Attention</title>
+<meta name="description" content="Veda: a distilled sparse attention framework for video diffusion. 90% sparsity at full-attention quality, 5.1× end-to-end speedup on 720P/241-frame generation. ICML 2026.">
+<meta property="og:title" content="Veda — Scalable Video Diffusion via Distilled Sparse Attention">
+<meta property="og:description" content="90% sparsity at full-attention quality · 5.1× end-to-end speedup · ICML 2026.">
+<meta property="og:type" content="website">
+<meta property="og:image" content="static/images/teaser.webp">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="icon" href="logo.svg">
+<!--FONTS:START-->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;1,6..72,400&display=swap" rel="stylesheet">
+<!--FONTS:END-->
+<link rel="stylesheet" href="static/css/base.css">
+<link id="theme" rel="stylesheet" href="static/css/theme-light.css">
+</head>
+<body class="theme-light">
+
+<div class="progress"><div class="progress__bar"></div></div>
+
+<div class="bg" aria-hidden="true">
+  <div class="bg__aurora"><b></b><b></b><b></b></div>
+  <div class="bg__grid"></div>
+  <div class="bg__grain"></div>
+</div>
+
+<!-- NAV -->
+<nav class="nav">
+  <div class="nav__inner">
+    <a class="nav__brand" href="#top"><img class="nav__logo" src="logo.svg" alt="Veda" width="30" height="30"> Veda</a>
+    <div class="nav__links" id="navLinks">
+      <a data-nav href="#speed">Speed</a>
+      <a data-nav href="#method">Method</a>
+      <a data-nav href="#results">Benchmarks</a>
+      <a data-nav href="#videos">Videos</a>
+      <a data-nav href="#analysis">Analysis</a>
+      <a data-nav href="#bibtex">BibTeX</a>
+    </div>
+    <button class="nav__burger" aria-label="Toggle menu"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M3 6h18M3 12h18M3 18h18"/></svg></button>
+  </div>
+</nav>
+
+<!-- HERO -->
+<header class="hero" id="top">
+  <div class="hero__inner">
+    <span class="hero__badge"><span class="dot"></span> <span class="venue">ICML 2026</span> · Sparse Video Diffusion</span>
+    <h1 class="hero__title">Scalable Video Diffusion via <span class="accent">Distilled Sparse Attention</span></h1>
+    <p class="hero__lead">
+      <b>Veda</b> keeps the essential structure of full attention under sparse computation —
+      holding visual quality at <b>90% sparsity</b> and turning a <b>19.4-minute</b> 720P generation
+      into a <b>3.8-minute</b> one. A <span class="hl">5.1× end-to-end speedup</span>, no quality loss.
+    </p>
+
+    <div class="hero__authors">
+      <span class="au">Shihao Han<sup>1,2,</sup><sup class="dag">*</sup></span>,
+      <span class="au">Hao Yang<sup>1,</sup><sup class="dag">†</sup></span>,
+      <span class="au">Xiaofeng Mei<sup>1</sup></span>,
+      <span class="au">Xinting Hu<sup>3</sup></span>,
+      <span class="au">Yi Jiang<sup>1</sup></span>,
+      <span class="au">Xiaojuan Qi<sup>2</sup></span>
+    </div>
+    <div class="hero__affil">
+      <span class="inst"><sup>1</sup>ByteDance</span> &nbsp;&nbsp; <span class="inst"><sup>2</sup>The University of Hong Kong</span> &nbsp;&nbsp; <span class="inst"><sup>3</sup>University of Science and Technology of China</span>
+    </div>
+    <div class="hero__notes"><sup class="dag">*</sup> Work done during internship at ByteDance. &nbsp; <sup class="dag">†</sup> Project Lead. &nbsp; Correspondence: xinting@ustc.edu.cn, xjqi@hku.hk</div>
+
+    <div class="hero__actions">
+      <a class="btn btn--primary" href="https://arxiv.org/pdf/2605.30325" target="_blank" rel="noopener">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6M9 13h6M9 17h6"/></svg> Paper
+      </a>
+      <a class="btn" href="#bibtex">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg> BibTeX
+      </a>
+    </div>
+  </div>
+</header>
+
+<!-- ========================= 1 · SPEED (top hook) ========================= -->
+<section class="section section--tight" id="speed">
+  <div class="wrap">
+    <div class="race reveal" id="speedRace">
+      <div class="race__head-row">
+        <div class="race__title">Watch the 5.1× speedup — a 720P · 241-frame generation, denoised live</div>
+        <button class="race__replay" type="button"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 1 0 3-6.7L3 8"/><path d="M3 3v5h5"/></svg> Replay</button>
+      </div>
+      <div class="race__rows">
+        <div class="race__row" data-dur="12.2" data-target="19.4" data-video="static/videos/race/race_full.mp4">
+          <div class="race__meta">
+            <span class="race__name"><span class="led"></span> Full Attention · FA3</span>
+            <span class="race__time"><span class="v">0.0</span><span class="u">min</span></span>
+          </div>
+          <div class="race__lane">
+            <div class="race__stage">
+              <video class="race__video" muted loop playsinline preload="none"></video>
+              <img class="race__img" src="static/posters/race/race_full.webp" alt="" aria-hidden="true">
+              <div class="race__noise"></div><div class="race__scan"></div>
+              <div class="race__done"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg> Done · now playing</div>
+            </div>
+            <div class="race__track"><div class="race__bar"></div></div>
+          </div>
+        </div>
+        <div class="race__row race__row--veda" data-dur="2.4" data-target="3.8" data-video="static/videos/race/race_veda.mp4">
+          <div class="race__meta">
+            <span class="race__name"><span class="led"></span> Veda · Ours <span style="color:var(--ink-mute)">95% sparse</span></span>
+            <span class="race__time"><span class="v">0.0</span><span class="u">min</span></span>
+          </div>
+          <div class="race__lane">
+            <div class="race__stage">
+              <video class="race__video" muted loop playsinline preload="none"></video>
+              <img class="race__img" src="static/posters/race/race_veda.webp" alt="" aria-hidden="true">
+              <div class="race__noise"></div><div class="race__scan"></div>
+              <div class="race__done"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg> Done · now playing</div>
+            </div>
+            <div class="race__track"><div class="race__bar"></div></div>
+          </div>
+        </div>
+      </div>
+      <div class="race__foot">
+        <span class="race__chip"><b>5.1×</b> faster end-to-end</span>
+        <span class="race__chip">19.4 min&nbsp;→&nbsp;<b style="color:var(--ink);-webkit-text-fill-color:var(--ink)">3.8 min</b></span>
+        <span class="race__chip">95% sparsity · identical quality</span>
+      </div>
+    </div>
+
+    <div class="split split--wR" style="margin-top:40px">
+      <div class="split__body">
+        <div class="eyebrow">Why it scales</div>
+        <h3 class="split__title">Quadratic cost, removed</h3>
+        <ul class="split__list">
+          <li>Full attention is <b>O(n²)</b> — Veda stays <b>near-linear</b>.</li>
+          <li>At 245K tokens: <b>1576&nbsp;ms → 309&nbsp;ms</b> per layer.</li>
+          <li>The gap <b>grows with length</b>.</li>
+        </ul>
+      </div>
+      <div class="split__media">
+        <figure class="fig reveal">
+          <div class="fig__media fig--pad"><div class="chart" data-chart="scaling"></div></div>
+          <figcaption class="fig__cap"><span class="tag">Scaling</span>Per-layer latency vs. sequence length. Full attention follows the <b>O(n²)</b> reference; Veda stays near-linear, reaching a <b>5.1×</b> gap at 245K tokens.</figcaption>
+        </figure>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ========================= 2 · METHOD / WHAT & HOW ========================= -->
+<section class="section" id="method">
+  <div class="wrap">
+    <div class="split split--wL" style="margin-bottom:34px">
+      <div class="split__body">
+        <div class="eyebrow">What is Veda</div>
+        <h2 class="split__title">Distill full attention — then skip the rest</h2>
+        <ul class="split__list">
+          <li><b>Distill</b> the tile-wise structure full attention relies on.</li>
+          <li>Quality holds at <b>extreme sparsity</b>.</li>
+          <li>Drop-in · Waver &amp; Wan2.1 · tile-skipping kernel = real speed.</li>
+        </ul>
+      </div>
+      <div class="split__media">
+        <div class="stats" style="grid-template-columns:1fr 1fr">
+          <div class="stat reveal"><div class="stat__num"><span data-count="5.1" data-dec="1">5.1</span><span class="u">×</span></div><div class="stat__label"><b>End-to-end speedup</b><br>720P · 241f · 12B</div></div>
+          <div class="stat reveal"><div class="stat__num"><span data-count="10.5" data-dec="1">10.5</span><span class="u">×</span></div><div class="stat__label"><b>Self-attention speedup</b><br>vs. FlashAttention-3</div></div>
+          <div class="stat reveal"><div class="stat__num"><span data-count="90" data-dec="0">90</span><span class="u">%</span></div><div class="stat__label"><b>Sparsity at parity</b><br>vs. full attention</div></div>
+          <div class="stat reveal"><div class="stat__num">92<span class="u">→</span>50<span class="u">%</span></div><div class="stat__label"><b>Attention overhead</b><br>reduced</div></div>
+        </div>
+      </div>
+    </div>
+
+    <figure class="fig fig--paper fig--pad reveal">
+      <div class="fig__media arch__scroll">
+        <div class="arch" id="archDiagram"><div class="arch3"><div class="arch3__panel arch3__panel--svg"><svg class="arch3__svg" viewBox="-8 0 252 451" role="img" aria-label="SVG: static sparse-attention pipeline"><defs>
+        <marker id="arrow-black-a" viewBox="0 -4 7 8" refX="6.2" refY="0" markerWidth="5.8" markerHeight="5.8" orient="auto" markerUnits="strokeWidth">
+          <path d="M1,-3 L6,0 L1,3" fill="none" stroke="#111" stroke-width="1.55" stroke-linecap="round" stroke-linejoin="round"></path>
+        </marker>
+        <marker id="arrow-green-a" viewBox="0 -4 7 8" refX="6.2" refY="0" markerWidth="5.8" markerHeight="5.8" orient="auto" markerUnits="strokeWidth">
+          <path d="M1,-3 L6,0 L1,3" fill="none" stroke="#9bb58d" stroke-width="1.45" stroke-linecap="round" stroke-linejoin="round"></path>
+        </marker>
+        <marker id="arrow-gold-a" viewBox="0 -4 7 8" refX="6.2" refY="0" markerWidth="5.8" markerHeight="5.8" orient="auto" markerUnits="strokeWidth">
+          <path d="M1,-3 L6,0 L1,3" fill="none" stroke="#d7b34f" stroke-width="1.45" stroke-linecap="round" stroke-linejoin="round"></path>
+        </marker>
+      </defs>
+        <text class="title" x="119" y="23">Input</text>
+        <path class="line" d="M119 31 V52" marker-end="url(#arrow-black-a)"></path>
+        <g class="node"><rect class="box peach" x="48" y="55" width="143" height="25" rx="4"></rect><text class="label" x="119.5" y="68">QKV Projection</text></g>
+
+        <path class="line" d="M119 80 V108"></path>
+        <path class="line" d="M119 108 Q119 114 113 114 H49 Q43 114 43 120 V146" marker-end="url(#arrow-black-a)"></path>
+        <path class="line" d="M119 108 Q119 114 125 114 H171 Q177 114 177 120 V146" marker-end="url(#arrow-black-a)"></path>
+        <g class="node"><rect class="box blue" x="1" y="149" width="84" height="25" rx="4"></rect><text class="label" x="43" y="162">Router</text></g>
+        <g class="node"><rect class="box gray" x="135" y="149" width="84" height="25" rx="4"></rect><text class="label" x="177" y="162">Reorder</text></g>
+
+        <path class="line" d="M10 174 V191" marker-end="url(#arrow-black-a)"></path>
+        <path class="line" d="M43 174 V191" marker-end="url(#arrow-black-a)"></path>
+        <path class="line" d="M76 174 V191" marker-end="url(#arrow-black-a)"></path>
+        <g transform="translate(3 194)">
+          <rect x="0" y="0" width="18" height="18" fill="#111" stroke="#111" stroke-width="1"></rect>
+          <path d="M3 15 V9 H8 V4 H15 V10 H10 V15 Z" fill="#fff"></path>
+        </g>
+        <g transform="translate(35 194)">
+          <rect x="0" y="0" width="18" height="18" fill="#111" stroke="#111" stroke-width="1"></rect>
+          <rect x="3" y="3" width="4" height="12" fill="#fff"></rect>
+          <rect x="12" y="3" width="4" height="12" fill="#fff"></rect>
+        </g>
+        <g transform="translate(67 194)">
+          <rect x="0" y="0" width="18" height="18" fill="#111" stroke="#111" stroke-width="1"></rect>
+          <path d="M3 3 H9 V7 H15 V15 H9 V11 H3 Z" fill="#fff"></path>
+        </g>
+
+        <path class="pool" d="M12 214 V226 Q12 231 18 231 H38 Q44 231 44 237 V252"></path>
+        <path class="pool" d="M76 214 V226 Q76 231 70 231 H50 Q44 231 44 237"></path>
+        <path class="pool" d="M44 214 V252 Q44 258 51 258 H130" marker-end="url(#arrow-green-a)"></path>
+        <path class="pool" d="M88 199 H101 Q108 199 108 192 V166 Q108 160 116 160 H131" marker-end="url(#arrow-green-a)"></path>
+        <path class="pool" d="M88 203 H101 Q108 204 108 215 V354 Q108 360 116 360 H131" marker-end="url(#arrow-green-a)"></path>
+
+        <path class="line" d="M177 174 V236" marker-end="url(#arrow-black-a)"></path>
+        <g class="node"><rect class="box whitebox" x="134" y="239" width="88" height="40" rx="4"></rect><text class="label" x="178" y="253">
+          <tspan x="178" dy="0">Sparse</tspan>
+          <tspan x="178" dy="12">Attention</tspan>
+        </text></g>
+        <path class="line" d="M178 279 V346" marker-end="url(#arrow-black-a)"></path>
+        <g class="node"><rect class="box gray" x="134" y="349" width="88" height="25" rx="4"></rect><text class="label" x="178" y="362">Reorder</text></g>
+        <path class="line" d="M178 374 V395" marker-end="url(#arrow-black-a)"></path>
+        <text class="title" x="178" y="413">Output</text>
+        <text class="caption" x="111" y="445">SVG</text>
+      </svg></div><div class="arch3__panel arch3__panel--vsa"><svg class="arch3__svg" viewBox="248 0 356 451" role="img" aria-label="VSA: dynamic learned-mask pipeline"><defs>
+        <marker id="arrow-black-b" viewBox="0 -4 7 8" refX="6.2" refY="0" markerWidth="5.8" markerHeight="5.8" orient="auto" markerUnits="strokeWidth">
+          <path d="M1,-3 L6,0 L1,3" fill="none" stroke="#111" stroke-width="1.55" stroke-linecap="round" stroke-linejoin="round"></path>
+        </marker>
+        <marker id="arrow-green-b" viewBox="0 -4 7 8" refX="6.2" refY="0" markerWidth="5.8" markerHeight="5.8" orient="auto" markerUnits="strokeWidth">
+          <path d="M1,-3 L6,0 L1,3" fill="none" stroke="#9bb58d" stroke-width="1.45" stroke-linecap="round" stroke-linejoin="round"></path>
+        </marker>
+        <marker id="arrow-gold-b" viewBox="0 -4 7 8" refX="6.2" refY="0" markerWidth="5.8" markerHeight="5.8" orient="auto" markerUnits="strokeWidth">
+          <path d="M1,-3 L6,0 L1,3" fill="none" stroke="#d7b34f" stroke-width="1.45" stroke-linecap="round" stroke-linejoin="round"></path>
+        </marker>
+      </defs>
+        <text class="title" x="425" y="16">Input</text>
+        <path class="line" d="M425 24 V31"></path>
+        <path class="line" d="M425 31 Q425 37 419 37 H324 Q318 37 318 43 V51" marker-end="url(#arrow-black-b)"></path>
+        <path class="line" d="M425 31 Q425 37 431 37 H498 Q504 37 504 43 V51" marker-end="url(#arrow-black-b)"></path>
+
+        <g class="node"><rect class="box peach" x="268" y="55" width="100" height="25" rx="4"></rect><text class="label" x="318" y="68">Gate Projection</text></g>
+        <g class="node"><rect class="box peach" x="432" y="55" width="143" height="25" rx="4"></rect><text class="label" x="503.5" y="68">QKV Projection</text></g>
+
+        <path class="line" d="M318 80 V96" marker-end="url(#arrow-black-b)"></path>
+        <path class="line" d="M504 80 V96" marker-end="url(#arrow-black-b)"></path>
+        <g class="node"><rect class="box gray" x="268" y="99" width="306" height="24" rx="4"></rect><text class="label" x="421" y="112">Tile &amp; Pad</text></g>
+
+        <path class="line" d="M318 123 V204" marker-end="url(#arrow-black-b)"></path>
+        <circle cx="318" cy="216" r="10" fill="#fff" stroke="#111" stroke-width="1.7"></circle>
+        <path d="M312 210 L324 222 M324 210 L312 222" stroke="#111" stroke-width="1.8" stroke-linecap="round"></path>
+
+        <path class="line" d="M504 123 V135 Q504 141 498 141 H416 Q410 141 410 147 V157" marker-end="url(#arrow-black-b)"></path>
+        <g class="node"><rect class="box greenbox" x="359" y="160" width="102" height="25" rx="4"></rect><text class="label" x="410" y="173">Average Pooling</text></g>
+        <path class="pool" d="M410 185 V201" marker-end="url(#arrow-green-b)"></path>
+        <g class="node"><rect class="box whitebox" x="359" y="204" width="102" height="25" rx="4"></rect><text class="label" x="410" y="217">Block Attention</text></g>
+        <path class="pool" d="M410 229 V246" marker-end="url(#arrow-green-b)"></path>
+        <g class="node"><rect class="box blue" x="359" y="249" width="102" height="24" rx="4"></rect><text class="label" x="410" y="262">Top-k Selection</text></g>
+        <path class="pool" d="M356 216 H331" marker-end="url(#arrow-green-b)"></path>
+        <path class="pool" d="M461 261 H486" marker-end="url(#arrow-green-b)"></path>
+
+        <path class="line" d="M504 123 V135 Q504 141 510 141 H526 Q532 141 532 147 V236" marker-end="url(#arrow-black-b)"></path>
+        <g class="node"><rect class="box whitebox" x="489" y="239" width="88" height="40" rx="4"></rect><text class="label" x="533" y="253">
+          <tspan x="533" dy="0">Sparse</tspan>
+          <tspan x="533" dy="12">Attention</tspan>
+        </text></g>
+        <path class="line" d="M318 226 V304 Q318 310 324 310 H477" marker-end="url(#arrow-black-b)"></path>
+        <path class="line" d="M533 279 V304 Q533 310 527 310 H504" marker-end="url(#arrow-black-b)"></path>
+        <circle cx="491" cy="310" r="9" fill="#fff" stroke="#111" stroke-width="1.5"></circle>
+        <path d="M485 310 H497 M491 304 V316" stroke="#111" stroke-width="1.5" stroke-linecap="round"></path>
+        <path class="line" d="M491 319 V346" marker-end="url(#arrow-black-b)"></path>
+        <g class="node"><rect class="box gray" x="417" y="349" width="149" height="25" rx="4"></rect><text class="label" x="491.5" y="362">Untile &amp; Unpad</text></g>
+        <path class="line" d="M492 374 V395" marker-end="url(#arrow-black-b)"></path>
+        <text class="title" x="492" y="413">Output</text>
+        <text class="caption" x="424" y="445">VSA</text>
+      </svg></div><div class="arch3__panel arch3__panel--veda"><svg class="arch3__svg" viewBox="598 0 430 451" role="img" aria-label="Veda (ours): distilled sparse-attention pipeline"><defs>
+        <marker id="arrow-black-c" viewBox="0 -4 7 8" refX="6.2" refY="0" markerWidth="5.8" markerHeight="5.8" orient="auto" markerUnits="strokeWidth">
+          <path d="M1,-3 L6,0 L1,3" fill="none" stroke="#111" stroke-width="1.55" stroke-linecap="round" stroke-linejoin="round"></path>
+        </marker>
+        <marker id="arrow-green-c" viewBox="0 -4 7 8" refX="6.2" refY="0" markerWidth="5.8" markerHeight="5.8" orient="auto" markerUnits="strokeWidth">
+          <path d="M1,-3 L6,0 L1,3" fill="none" stroke="#9bb58d" stroke-width="1.45" stroke-linecap="round" stroke-linejoin="round"></path>
+        </marker>
+        <marker id="arrow-gold-c" viewBox="0 -4 7 8" refX="6.2" refY="0" markerWidth="5.8" markerHeight="5.8" orient="auto" markerUnits="strokeWidth">
+          <path d="M1,-3 L6,0 L1,3" fill="none" stroke="#d7b34f" stroke-width="1.45" stroke-linecap="round" stroke-linejoin="round"></path>
+        </marker>
+      </defs>
+        <rect class="pale" x="622" y="66" width="126" height="231" rx="3"></rect>
+        <rect class="tag" x="633" y="57" width="104" height="25" rx="3"></rect>
+        <text class="label small" x="685" y="69">Training-Time Only</text>
+
+        <g class="node"><rect id="vd-search" class="box blue" x="642" y="96" width="85" height="25" rx="4" stroke-dasharray="3 3"></rect><text class="label" x="684.5" y="109">Offline Search</text></g>
+        <path id="vl-search" class="line dash" d="M727 109 H802" marker-end="url(#arrow-black-c)"></path>
+
+        <g class="node"><rect id="vd-attn" class="box whitebox" x="633" y="165" width="103" height="25" rx="4"></rect><text class="label" x="684.5" y="178">Attention</text></g>
+        <path id="vl-attn-maxpool" class="line dash" d="M685 190 V211" marker-end="url(#arrow-black-c)"></path>
+        <g class="node"><rect id="vd-maxpool" class="box greenbox" x="633" y="214" width="103" height="25" rx="4"></rect><text class="label" x="684.5" y="227">Max Pooling</text></g>
+        <path id="vl-maxpool-loss" class="pool dash" d="M685 239 V264" marker-end="url(#arrow-green-c)"></path>
+        <text id="vd-loss" class="loss" x="657" y="282">
+          <tspan class="loss-symbol">𝓛</tspan>
+          <tspan class="loss-sub" baseline-shift="-25%">distill</tspan>
+        </text>
+
+        <text class="title" x="878" y="23">Input</text>
+        <path class="line" d="M878 31 V52" marker-end="url(#arrow-black-c)"></path>
+        <g class="node"><rect class="box peach" x="806" y="55" width="143" height="25" rx="4"></rect><text class="label" x="877.5" y="68">QKV Projection</text></g>
+        <path class="line" d="M878 80 V96" marker-end="url(#arrow-black-c)"></path>
+        <g class="node"><rect id="vd-tile" class="box gray" x="806" y="99" width="146" height="24" rx="4"></rect><text class="label" x="879" y="112">Tile &amp; Pad</text></g>
+
+        <path id="vl-tile-est" class="line dash" d="M821 143 H690 Q685 143 685 148 V162" marker-end="url(#arrow-black-c)"></path>
+        <path class="line" d="M879 123 V135 Q879 143 871 143 H829 Q821 143 821 151 V162" marker-end="url(#arrow-black-c)"></path>
+        <g class="node"><rect id="vd-triplet" class="box greenbox" x="770" y="165" width="102" height="25" rx="4"></rect><text class="label" x="821" y="178">Triplet Pooling</text></g>
+        <path id="vl-triplet-qk" class="pool" d="M821 190 V212" marker-end="url(#arrow-green-c)"></path>
+        <g class="node"><rect id="vd-qk" class="box peach" x="770" y="215" width="102" height="25" rx="4"></rect><text class="label" x="821" y="228">QK Projection</text></g>
+        <path id="vl-qk-block" class="pool" d="M821 240 V261" marker-end="url(#arrow-green-c)"></path>
+        <g class="node"><rect id="vd-block" class="box whitebox" x="770" y="264" width="102" height="25" rx="4"></rect><text class="label" x="821" y="277">Block Attention</text></g>
+        <path id="vl-block-topk" class="pool" d="M821 289 V307" marker-end="url(#arrow-green-c)"></path>
+        <g class="node"><rect id="vd-topk" class="box blue" x="770" y="310" width="102" height="24" rx="4"></rect><text class="label" x="821" y="323">Top-k Selection</text></g>
+        <path class="pool" d="M872 322 H902" marker-end="url(#arrow-green-c)"></path>
+
+        <path id="vl-to-sparse" class="line" d="M879 123 V135 Q879 143 887 143 H940 Q948 143 948 151 V299" marker-end="url(#arrow-black-c)"></path>
+        <g class="node"><rect id="vd-sparse" class="box whitebox" x="905" y="302" width="88" height="40" rx="4"></rect><text class="label" x="949" y="316">
+          <tspan x="949" dy="0">Sparse</tspan>
+          <tspan x="949" dy="12">Attention</tspan>
+        </text></g>
+        <path class="line" d="M949 342 V354" marker-end="url(#arrow-black-c)"></path>
+        <g class="node"><rect class="box gray" x="874" y="357" width="149" height="25" rx="4"></rect><text class="label" x="948.5" y="370">Untile &amp; Unpad</text></g>
+        <path class="line" d="M949 382 V396" marker-end="url(#arrow-black-c)"></path>
+        <text class="title" x="949" y="414">Output</text>
+
+        <path id="vl-block-grad" class="pool dash" d="M770 276 H715" marker-end="url(#arrow-green-c)"></path>
+        <path id="vl-gradflow" class="grad dash" d="M716 258 H806 Q814 258 814 250 V247" marker-end="url(#arrow-gold-c)"></path>
+        <text id="vl-gradtext" x="746" y="254" fill="#d7b34f" font-size="8" font-weight="700">Gradient Flow</text>
+
+        <g id="legend">
+          <rect class="pale" x="618" y="368" width="122" height="55" rx="4"></rect>
+          <path class="line" d="M630 381 H650" marker-end="url(#arrow-black-c)"></path>
+          <text class="legend" x="657" y="381">Full Sequence</text>
+          <path class="pool" d="M630 395 H650" marker-end="url(#arrow-green-c)"></path>
+          <text class="legend" x="657" y="395">Pooled Sequence</text>
+          <path class="grad" d="M630 409 H650" marker-end="url(#arrow-gold-c)"></path>
+          <text class="legend" x="657" y="409">Gradient Flow</text>
+        </g>
+
+        <text class="caption" x="829" y="445">Veda (Ours)</text>
+      </svg></div></div></div>
+      </div>
+      <figcaption class="fig__cap"><span class="tag">Architecture</span>Veda vs. static patterns (<b>SVG</b>) and implicitly-learned masks (<b>VSA</b>). Solid lines are inference data-flow; dashed lines are training-only. <i>Hover a component card below — or any block — to highlight matching stages.</i></figcaption>
+    </figure>
+
+    <div class="components">
+      <div class="component reveal" data-arch="vd-attn vd-maxpool vd-loss vd-triplet vd-qk vd-block vd-topk vl-attn-maxpool vl-maxpool-loss vl-triplet-qk vl-qk-block vl-block-topk vl-block-grad vl-gradflow vl-gradtext" tabindex="0">
+        <div class="component__ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 3v18M3 12h18"/></svg></div>
+        <div class="component__n">Component 01</div>
+        <h3 class="component__t">Distilled Tile Scoring</h3>
+        <p class="component__b">Reconstruct <b>max-pooled full-attention</b> scores via <b>triplet pooling</b> (avg·max·min) + a KL distillation loss. Tile selection becomes an explicit, supervised target.</p>
+      </div>
+      <div class="component reveal" data-arch="vd-search vd-tile vl-search" tabindex="0">
+        <div class="component__ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg></div>
+        <div class="component__n">Component 02</div>
+        <h3 class="component__t">Head-Aware Tiling</h3>
+        <p class="component__b">Per-head tile shape (p<sub>t</sub>, p<sub>h</sub>, p<sub>w</sub>) picked by <b>offline search</b> minimizing reconstruction error — spatial vs. temporal heads tiled differently.</p>
+      </div>
+      <div class="component reveal" data-arch="vd-sparse" tabindex="0">
+        <div class="component__ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 6h16M4 12h16M4 18h16"/><circle cx="8" cy="6" r="1.6" fill="currentColor"/><circle cx="16" cy="12" r="1.6" fill="currentColor"/><circle cx="10" cy="18" r="1.6" fill="currentColor"/></svg></div>
+        <div class="component__n">Component 03</div>
+        <h3 class="component__t">Tile-Skipping Kernel</h3>
+        <p class="component__b">Hopper kernel (ThunderKittens): <b>TMA + warp specialization</b> gathers only selected tiles, hiding memory latency behind tensor-core math. <b>~80% of FA3 MFU</b>.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ========================= 3 · BENCHMARKS ========================= -->
+<section class="section" id="results">
+  <div class="wrap">
+    <div class="eyebrow">Benchmarks</div>
+    <h2 class="section__title">Parity in quality, multiples in speed</h2>
+    <p class="section__sub">Human study + per-layer latency. <b>Hover any chart</b> for exact values.</p>
+
+    <div class="split split--wR" style="margin-bottom:36px">
+      <div class="split__body">
+        <div class="eyebrow">Human preference</div>
+        <h3 class="split__title">Indistinguishable at 90%, ahead of VSA at 95%</h3>
+        <ul class="split__list">
+          <li><b>90% sparsity = parity</b> with full attention (63% tie on motion).</li>
+          <li><b>95%</b> beats VSA@87.5%; crushes VSA@95% — <b>76% vs. 24%</b> visual.</li>
+        </ul>
+      </div>
+      <div class="split__media">
+        <figure class="fig reveal">
+          <div class="fig__media fig--pad"><div class="chart" data-chart="humaneval"></div></div>
+          <figcaption class="fig__cap"><span class="tag">Human study</span>Win / tie / loss across four axes on Waver-bench 1.0 (Waver-T2V-1B, 480P).</figcaption>
+        </figure>
+      </div>
+    </div>
+
+    <div class="split split--wL" style="margin-top:8px;align-items:center">
+      <div class="split__media">
+        <figure class="fig reveal">
+          <div class="fig__media fig--pad" style="padding:clamp(18px,2.4vw,32px)"><div class="chart" data-chart="speedup"></div></div>
+          <figcaption class="fig__cap"><span class="tag">ms / layer</span>Full Attention vs. Veda — MLP · mask&nbsp;prep · attention&nbsp;kernel.</figcaption>
+        </figure>
+      </div>
+      <div class="split__body">
+        <div class="eyebrow">Wall-clock latency · Hopper</div>
+        <h3 class="split__title">Attention overhead, collapsed</h3>
+        <p class="split__text">Per-layer latency vs. FlashAttention-3 at 720P &amp; 480P, on both backbones. The <b>shorter Veda bar is the time</b>; the <b>badge is the speed-up</b>.</p>
+        <ul class="split__list">
+          <li>Waver-T2V <b>315 → 78 ms</b> · 4.03×.</li>
+          <li>Wan2.1 <b>584 → 221 ms</b> · 2.64×.</li>
+          <li>Attention share of compute <b>92% → 50%</b>.</li>
+        </ul>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- ========================= 4 · VIDEOS ========================= -->
+<section class="section" id="videos">
+  <div class="wrap">
+    <div class="eyebrow">Video Showcase · Drag to Compare</div>
+    <h2 class="section__title">Full Attention vs. Veda — same prompt, same seed</h2>
+    <p class="section__sub"><b>Drag</b> the handle · <b>pick a clip</b> below · left = FlashAttention-3 · right = Veda sparse.</p>
+    <div class="cviewer reveal" id="cmp-viewer"><!-- comparison viewer injected from manifest --></div>
+
+    <h3 class="section__title" style="font-size:clamp(20px,2.2vw,26px);margin-top:52px">More samples — click to enlarge</h3>
+    <p class="section__sub">All generated by Veda · hover to play · <b>click any clip</b> to expand.</p>
+    <div class="marquee reveal" id="sample-marquee"><!-- sample marquee injected from manifest --></div>
+  </div>
+</section>
+
+<!-- ========================= 5 · ANALYSIS ========================= -->
+<section class="section" id="analysis">
+  <div class="wrap">
+    <div class="eyebrow">Analysis · Where the idea comes from</div>
+    <h2 class="section__title">What makes a good sparse model?</h2>
+    <p class="section__sub">What actually breaks sparse attention at high sparsity — and how Veda fixes it.</p>
+
+    <!-- 01 · symptom -->
+    <div class="eyebrow" style="margin-top:8px">01 · The symptom</div>
+    <h3 class="split__title" style="margin:0 0 10px">Structural artifacts emerge at high sparsity</h3>
+    <p class="section__sub" style="margin-bottom:18px">Push sparsity past ~90% and prior methods don't merely lose detail — they develop a <b>distinct class of structural artifacts</b>: water-ripple warping that swims across surfaces, local geometric distortion, and temporal flicker between frames. These are qualitatively different from a dense model's semantic mistakes, and they are exactly what make naïve sparsity unusable for video.</p>
+    <figure class="fig reveal">
+      <div class="fig__media fig--pad">
+        <div class="quad quad--3">
+          <div class="quad__item quad__item--bad"><video class="quad__v" data-src="static/videos/analysis/artifact_1.mp4" poster="static/posters/analysis/artifact_1.webp" muted loop playsinline preload="none"></video></div>
+          <div class="quad__item quad__item--bad"><video class="quad__v" data-src="static/videos/analysis/artifact_2.mp4" poster="static/posters/analysis/artifact_2.webp" muted loop playsinline preload="none"></video></div>
+          <div class="quad__item quad__item--bad"><video class="quad__v" data-src="static/videos/analysis/artifact_3.mp4" poster="static/posters/analysis/artifact_3.webp" muted loop playsinline preload="none"></video></div>
+        </div>
+      </div>
+      <figcaption class="fig__cap">Pooling-based masks produce <b>water-ripple distortions &amp; temporal flicker</b> — structural failures, not ordinary generation noise.</figcaption>
+    </figure>
+
+    <!-- 02 · cause -->
+    <div class="eyebrow" style="margin-top:42px">02 · The cause</div>
+    <h3 class="split__title" style="margin:0 0 10px">Mask quality — not the sparsity ratio — decides</h3>
+    <p class="section__sub" style="margin-bottom:18px">We isolate the cause with a controlled study: at one fixed 90% budget we change <b>only the mask</b>. An <b>Oracle</b> mask — the true Top-k tiles read from full attention — preserves fidelity, while an average-pooling estimate collapses. So the bottleneck is not the sparsity ratio but <b>how well the mask matches the tile-wise geometry of full attention</b>. A simple tile-recall metric makes this concrete — Veda recovers <b>66.4%</b> of the oracle's tiles vs. average pooling's 34.2%, and higher recall tracks artifact-free output.</p>
+    <figure class="fig reveal">
+      <div class="fig__media fig--pad">
+        <div class="quad">
+          <div class="quad__item"><span class="quad__tag">Full Attention</span><video class="quad__v" data-src="static/videos/analysis/mask_fa.mp4" poster="static/posters/analysis/mask.webp" muted loop playsinline preload="none"></video></div>
+          <div class="quad__item"><span class="quad__tag">Oracle Mask</span><video class="quad__v" data-src="static/videos/analysis/mask_oracle.mp4" poster="static/posters/analysis/mask.webp" muted loop playsinline preload="none"></video></div>
+          <div class="quad__item quad__item--bad"><span class="quad__tag">Average Pooling</span><video class="quad__v" data-src="static/videos/analysis/mask_avgpool.mp4" poster="static/posters/analysis/mask.webp" muted loop playsinline preload="none"></video></div>
+          <div class="quad__item quad__item--ours"><span class="quad__tag">Veda · Ours</span><video class="quad__v" data-src="static/videos/analysis/mask_veda.mp4" poster="static/posters/analysis/mask.webp" muted loop playsinline preload="none"></video></div>
+        </div>
+      </div>
+      <figcaption class="fig__cap">Same 90% budget. Full Attention, the Oracle, and <b>Veda stay clean</b>; Average Pooling drifts off the attention geometry &amp; breaks — Veda recovers <b>66.4% tile recall</b> vs. average pooling's 34.2%.</figcaption>
+    </figure>
+
+    <!-- 03 · the fix (text ↔ image, alternating) -->
+    <div class="split split--wL" style="margin-top:42px">
+      <div class="split__media">
+        <figure class="fig reveal">
+          <div class="fig__media"><img src="static/images/head_diversity.webp" alt="Attention maps across heads and timesteps showing diverse spatial and temporal footprints." loading="lazy" data-zoom></div>
+        </figure>
+      </div>
+      <div class="split__body">
+        <div class="eyebrow">03 · Heads are heterogeneous</div>
+        <h3 class="split__title">One tiling can't fit all heads</h3>
+        <p class="split__text">Attention heads in video DiTs are strongly heterogeneous: some capture local spatial structure, others model long-range temporal dependencies — and the pattern <b>drifts across diffusion timesteps</b>. A single uniform tiling therefore under-aggregates some heads and over-aggregates others, eroding tile recall exactly where it matters.</p>
+      </div>
+    </div>
+    <div class="split split--wR" style="margin-top:24px">
+      <div class="split__body">
+        <div class="eyebrow">The fix · head-aware tiling</div>
+        <h3 class="split__title">Adapt the tile shape per head</h3>
+        <ul class="split__list">
+          <li>Static tilings <b>regress</b>; head-aware is <b>positive on every axis</b>.</li>
+          <li><b>+9.5% Overall</b> · <b>+7.2% Motion</b> vs. best static <code style="font-family:var(--font-mono);font-size:.9em">[4,4,8]</code>.</li>
+        </ul>
+      </div>
+      <div class="split__media">
+        <figure class="fig reveal">
+          <div class="fig__media fig--pad"><div class="chart" data-chart="ablation"></div></div>
+          <figcaption class="fig__cap"><span class="tag">Ablation</span>Net human-preference win-rate vs. the best static tiling.</figcaption>
+        </figure>
+      </div>
+    </div>
+
+    <!-- THEORY (full discussion) -->
+    <div style="margin-top:58px">
+      <div class="eyebrow">Why It Works · Theory</div>
+      <h2 class="section__title">The derivation, step by step</h2>
+      <p class="section__sub">A complete, self-contained argument for why <b>distillation</b> — not heavier pruning — is the right lever.</p>
+
+      <div class="deriv">
+        <div class="deriv__step reveal">
+          <div class="deriv__num">1</div>
+          <div class="deriv__card">
+            <div class="deriv__lead">Energy-based view · why errors explode</div>
+            <h3 class="deriv__t">Mask errors are amplified, not averaged</h3>
+            <p class="deriv__text">Self-attention is an energy-based model: the softmax over logits <i>u<sub>j</sub> = q·k<sub>j</sub></i> is the gradient of a Log-Sum-Exp potential <i>Ψ(u)=τ·log Σ exp(u<sub>j</sub>/τ)</i>, which is <b>dominated by its largest term</b>. If a sparse mask drops the dominant key, the surviving mass is renormalized — every kept probability is multiplied by <i>Z/Ẑ &gt; 1</i>, so confidence is inflated and re-assigned to noise. Because softmax is non-linear, the error is <b>amplified, not averaged away</b> — a <i>structural hallucination</i>. Faithfully recovering the oracle Top-k is therefore a <b>prerequisite</b> for stability at high sparsity, not a refinement.</p>
+            <code class="eq">Ψ(u)=τ·log Σ<sub>j</sub> exp(u<sub>j</sub>/τ) &nbsp;⟹&nbsp; P̃<sub>j</sub> = (Z / Ẑ) · P<sub>j</sub> &gt; P<sub>j</sub></code>
+            <div class="deriv__arrow">↓ so we must estimate the Q·K ranking accurately — and cheaply</div>
+          </div>
+        </div>
+        <div class="deriv__step reveal">
+          <div class="deriv__num">2</div>
+          <div class="deriv__card">
+            <div class="deriv__lead">Sufficient statistics · why a mean is not enough</div>
+            <h3 class="deriv__t">Triplet pooling reconstructs the dot product</h3>
+            <p class="deriv__text">A tile score must be estimated from a few pooled statistics. A single <b>mean</b> (average pooling) is provably insufficient: the dot product decomposes into a centroid term plus a covariance term, and pooling to the mean <b>discards the covariance</b> — mean-similar tiles become indistinguishable and the score matrix loses rank. We restore the missing second-order term with extrema: by the <b>Bhatia–Davis</b> inequality the variance of a bounded variable obeys <i>σ² ≤ (M−μ)(μ−m)</i>, so the triplet <b>{avg, max, min}</b> is a bounding box that pins down each tile's spread — enough to reconstruct the score at negligible extra I/O.</p>
+            <code class="eq"><i>q·k</i> = d·μ<sub>q</sub>μ<sub>k</sub> + d·Cov(<i>q,k</i>) &nbsp;·&nbsp; σ² ≤ (M−μ)(μ−m)</code>
+            <div class="deriv__arrow">↓ but this bound is only tight when a tile's tokens are similar</div>
+          </div>
+        </div>
+        <div class="deriv__step reveal">
+          <div class="deriv__num">3</div>
+          <div class="deriv__card">
+            <div class="deriv__lead">Bandwidth minimization · why tiling must adapt</div>
+            <h3 class="deriv__t">Head-aware tiling minimizes intra-tile variance</h3>
+            <p class="deriv__text">The neglected residual interaction inside a tile is bounded (Cauchy–Schwarz) by <i>E ≤ B·σ<sub>q</sub>·σ<sub>k</sub></i>, so the estimate degrades as intra-tile variance grows — a tile's tokens must be <b>similar</b>. Under 3D RoPE, tokens lie on a spatio-temporal manifold where affinity decays with geodesic distance; a naïve raster tiling scatters temporal neighbours and inflates variance. <b>Head-Aware Tiling</b> searches per-head factorizations <i>(p<sub>t</sub>, p<sub>h</sub>, p<sub>w</sub>)</i> that fold the manifold into memory while keeping high-affinity tokens together — minimizing attention <b>bandwidth</b>, and with it the variance that Step 2 depends on. The ablation above confirms the gain on every quality axis.</p>
+            <code class="eq"><i>E</i> = |Σ<sub>i</sub> ⟨r<sup>q</sup><sub>i</sub>, r<sup>k</sup><sub>i</sub>⟩| ≤ B · σ<sub>q</sub> · σ<sub>k</sub></code>
+          </div>
+        </div>
+      </div>
+      <div class="synthesis reveal">
+        <div class="synthesis__ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2l2.6 7.2L22 9.6l-5.6 4.6L18.2 22 12 17.9 5.8 22l1.8-7.8L2 9.6l7.4-.4z"/></svg></div>
+        <div>
+          <h4 class="synthesis__t">Putting it together</h4>
+          <p class="synthesis__b">Distill the <b>oracle ranking</b> (Step 1) using <b>sufficient statistics</b> (Step 2) under <b>variance-minimizing, head-aware tilings</b> (Step 3). Each piece is necessary — together they keep the tile mask aligned with full attention even at <b>95% sparsity</b>.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- BIBTEX -->
+<section class="section section--tight" id="bibtex">
+  <div class="wrap">
+    <div class="eyebrow">Citation</div>
+    <h2 class="section__title">BibTeX</h2>
+    <div class="bib reveal">
+      <div class="bib__bar">
+        <div class="bib__dots"><i></i><i></i><i></i></div>
+        <button class="bib__copy" data-copy="#bibText"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg> Copy</button>
+      </div>
+<pre id="bibText"><span class="k">@inproceedings</span>{<span class="f">han2026veda</span>,
+  <span class="f">title</span>     = <span class="s">{Veda: Scalable Video Diffusion via Distilled Sparse Attention}</span>,
+  <span class="f">author</span>    = <span class="s">{Han, Shihao and Yang, Hao and Mei, Xiaofeng and Hu, Xinting and Jiang, Yi and Qi, Xiaojuan}</span>,
+  <span class="f">booktitle</span> = <span class="s">{International Conference on Machine Learning (ICML)}</span>,
+  <span class="f">year</span>      = <span class="s">{2026}</span>
+}</pre>
+    </div>
+  </div>
+</section>
+
+<footer class="footer">
+  <div class="wrap footer__inner">
+    <span>© 2026 Veda · ByteDance · The University of Hong Kong · USTC</span>
+    <span><a href="#top">Back to top ↑</a> &nbsp;·&nbsp; <a href="https://arxiv.org/abs/2605.30325" target="_blank" rel="noopener">arXiv</a> &nbsp;·&nbsp; <a href="#">Code</a></span>
+  </div>
+</footer>
+
+<script src="static/js/media.js"></script>
+<script src="static/js/charts.js"></script>
+<script src="static/js/veda.js"></script>
+</body>
+</html>

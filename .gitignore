@@ -1,0 +1,23 @@
+# --- original / source material (not part of the published site) ---
+# raw videos copied in for processing — re-create with scripts/populate_curated.sh
+_assets/
+
+# scratch: headless-render screenshots, contact sheets, design prototypes,
+# figure conversions, workflow logs, etc.
+_work/
+
+# --- OS / editor cruft ---
+.DS_Store
+**/.DS_Store
+Thumbs.db
+*.swp
+.idea/
+.vscode/
+
+# --- logs / temp ---
+*.log
+*.output
+*.tmp
+
+# --- node ---
+node_modules/

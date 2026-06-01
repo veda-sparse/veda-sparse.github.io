@@ -1,0 +1,54 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="570" height="522" viewBox="0 0 570 522" role="img" aria-label="Vectorized logo">
+  <defs>
+    <linearGradient id="gridGradient" x1="95" y1="70" x2="282" y2="485" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#7b6cff"/>
+      <stop offset="0.45" stop-color="#2aa3ff"/>
+      <stop offset="0.75" stop-color="#16c0c4"/>
+      <stop offset="1" stop-color="#11b3ad"/>
+    </linearGradient>
+    <linearGradient id="bladeGradient" x1="340" y1="450" x2="535" y2="40" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#083858"/>
+      <stop offset="1" stop-color="#0a4d72"/>
+    </linearGradient>
+  </defs>
+
+  <path d="M423 41 L548 41 L381.1 480 L319 319 Z" fill="url(#bladeGradient)"/>
+
+  <g>
+    <path d="M30 45 L187 45 L356 483 L198 483 Z" fill="url(#gridGradient)"/>
+
+    <g fill="none" stroke="#104866" stroke-width="8.5" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M30 45 L109 45 L187 45"/>
+      <path d="M64 133 L142 133 L221 133"/>
+      <path d="M97 220 L176 220 L255 220"/>
+      <path d="M131 308 L209 308 L288 308"/>
+      <path d="M164 395 L243 395 L322 395"/>
+      <path d="M198 483 L276 483 L356 483"/>
+
+      <path d="M30 45 L198 483"/>
+      <path d="M109 45 L276 483"/>
+      <path d="M187 45 L356 483"/>
+    </g>
+
+    <g fill="#104866">
+      <circle cx="30" cy="45" r="12.5"/>
+      <circle cx="109" cy="45" r="12.5"/>
+      <circle cx="187" cy="45" r="12.5"/>
+      <circle cx="64" cy="133" r="12.5"/>
+      <circle cx="142" cy="133" r="12.5"/>
+      <circle cx="221" cy="133" r="12.5"/>
+      <circle cx="97" cy="220" r="12.5"/>
+      <circle cx="176" cy="220" r="12.5"/>
+      <circle cx="255" cy="220" r="12.5"/>
+      <circle cx="131" cy="308" r="12.5"/>
+      <circle cx="209" cy="308" r="12.5"/>
+      <circle cx="288" cy="308" r="12.5"/>
+      <circle cx="164" cy="395" r="12.5"/>
+      <circle cx="243" cy="395" r="12.5"/>
+      <circle cx="322" cy="395" r="12.5"/>
+      <circle cx="198" cy="483" r="12.5"/>
+      <circle cx="276" cy="483" r="12.5"/>
+      <circle cx="356" cy="483" r="12.5"/>
+    </g>
+  </g>
+</svg>
