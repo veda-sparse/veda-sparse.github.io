@@ -204,15 +204,15 @@
 
   /* ------------------------------------------------------------- HUMAN EVAL */
   const HE_GROUPS = [
-    { title: 'Veda 90% vs. Full Attention', short: 'Full Attn', m: [[35, 35, 31], [19, 63, 18], [50, 1, 49], [32, 38, 30]] },
-    { title: 'Veda 95% vs. VSA 87.5%', short: 'VSA 87.5%', m: [[25, 52, 24], [21, 59, 20], [54, 0, 46], [38, 31, 31]] },
-    { title: 'Veda 95% vs. VSA 95%', short: 'VSA 95%', m: [[39, 45, 16], [35, 50, 15], [76, 0, 24], [40, 30, 30]] },
+    { title: 'Veda 90% sparsity vs. Full Attention', short: 'Veda 90% / Full Attn', ours: 'Veda 90% better', base: 'Full Attention better', m: [[35, 35, 31], [19, 63, 18], [50, 1, 49], [32, 38, 30]] },
+    { title: 'Veda 95% sparsity vs. VSA 87.5% sparsity', short: 'Veda 95% / VSA 87.5%', ours: 'Veda 95% better', base: 'VSA 87.5% better', m: [[25, 52, 24], [21, 59, 20], [54, 0, 46], [38, 31, 31]] },
+    { title: 'Veda 95% sparsity vs. VSA 95% sparsity', short: 'Veda 95% / VSA 95%', ours: 'Veda 95% better', base: 'VSA 95% better', m: [[39, 45, 16], [35, 50, 15], [76, 0, 24], [40, 30, 30]] },
   ];
   const HE_METRICS = ['Overall Quality', 'Motion Quality', 'Visual Quality', 'Prompt Following'];
   function renderHumanEval(wrap) {
     const c = COL();
     const tabs = document.createElement('div'); tabs.className = 'chart__tabs';
-    const lbl = document.createElement('span'); lbl.className = 'chart__tabs-label'; lbl.textContent = 'Veda vs.'; tabs.appendChild(lbl);
+    // const lbl = document.createElement('span'); lbl.className = 'chart__tabs-label'; lbl.textContent = 'Comparison'; tabs.appendChild(lbl);
     HE_GROUPS.forEach((g, i) => {
       const b = document.createElement('button'); b.className = 'chart__tab' + (i === 0 ? ' is-active' : ''); b.type = 'button'; b.textContent = g.short; b.title = g.title;
       b.addEventListener('click', () => { $$('.chart__tab', tabs).forEach((x) => x.classList.remove('is-active')); b.classList.add('is-active'); draw(i); });
@@ -235,7 +235,7 @@
       g.m.forEach((row, ri) => {
         const y = padT + ri * rowH + 8, bh = 26;
         el('text', { x: m.l - 12, y: y + bh / 2 + 4, 'text-anchor': 'end', class: 'chart__lbl' }, svg).textContent = HE_METRICS[ri];
-        const segs = [{ v: row[0], c: c.veda, n: 'Veda better' }, { v: row[1], c: c.tie, n: 'Tie' }, { v: row[2], c: c.base, n: 'Baseline better' }];
+        const segs = [{ v: row[0], c: c.veda, n: g.ours }, { v: row[1], c: c.tie, n: 'Tie' }, { v: row[2], c: c.base, n: g.base }];
         let acc = 0;
         segs.forEach((s) => {
           const x0 = X(acc), w = s.v / 100 * iw;
@@ -250,7 +250,7 @@
       });
     }
     onVisible(wrap, () => draw(0));
-    legend(wrap, [['Veda better', c.veda], ['Tie', c.tie], ['Baseline better', c.base]]);
+    legend(wrap, [['Veda better', c.veda], ['Tie', c.tie], ['Comparison method better', c.base]]);
   }
 
   /* ------------------------------------------------------------------ RADAR */

@@ -3,10 +3,10 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Veda — Scalable Video Diffusion via Distilled Sparse Attention</title>
-<meta name="description" content="Veda: a distilled sparse attention framework for video diffusion. 90% sparsity at full-attention quality, 5.1× end-to-end speedup on 720P/241-frame generation. ICML 2026.">
-<meta property="og:title" content="Veda — Scalable Video Diffusion via Distilled Sparse Attention">
-<meta property="og:description" content="90% sparsity at full-attention quality · 5.1× end-to-end speedup · ICML 2026.">
+<title>Veda: Scalable Video Diffusion via Distilled Sparse Attention</title>
+<meta name="description" content="Veda distills full-attention tile structure for sparse video diffusion, preserving quality at 90% sparsity and accelerating 720P, 241-frame generation by 5.1×. ICML 2026.">
+<meta property="og:title" content="Veda: Scalable Video Diffusion via Distilled Sparse Attention">
+<meta property="og:description" content="Full-attention tile distillation · 90% sparsity at perceptual parity · 5.1× end-to-end acceleration.">
 <meta property="og:type" content="website">
 <meta property="og:image" content="static/images/teaser.webp">
 <meta name="twitter:card" content="summary_large_image">
@@ -34,9 +34,9 @@
   <div class="nav__inner">
     <a class="nav__brand" href="#top"><img class="nav__logo" src="logo.svg" alt="Veda" width="30" height="30"> Veda</a>
     <div class="nav__links" id="navLinks">
-      <a data-nav href="#speed">Speed</a>
+      <a data-nav href="#speed">Scaling</a>
       <a data-nav href="#method">Method</a>
-      <a data-nav href="#results">Benchmarks</a>
+      <a data-nav href="#results">Evaluation</a>
       <a data-nav href="#videos">Videos</a>
       <a data-nav href="#analysis">Analysis</a>
       <a data-nav href="#bibtex">BibTeX</a>
@@ -48,12 +48,12 @@
 <!-- HERO -->
 <header class="hero" id="top">
   <div class="hero__inner">
-    <span class="hero__badge"><span class="dot"></span> <span class="venue">ICML 2026</span> · Sparse Video Diffusion</span>
+    <span class="hero__badge"><span class="dot"></span> <span class="venue">ICML 2026</span> · Video Diffusion · Sparse Attention</span>
     <h1 class="hero__title">Scalable Video Diffusion via <span class="accent">Distilled Sparse Attention</span></h1>
     <p class="hero__lead">
-      <b>Veda</b> keeps the essential structure of full attention under sparse computation —
-      holding visual quality at <b>90% sparsity</b> and turning a <b>19.4-minute</b> 720P generation
-      into a <b>3.8-minute</b> one. A <span class="hl">5.1× end-to-end speedup</span>, no quality loss.
+      <b>Veda</b>: full-attention tile distillation for video DiTs.<br>
+      <b>90% sparsity</b> at perceptual parity. <b>95% sparse</b> 720P generation:
+      <b>19.4 min → 3.8 min</b>. <span class="hl">5.1× end-to-end acceleration</span>.
     </p>
 
     <div class="hero__authors">
@@ -67,7 +67,7 @@
     <div class="hero__affil">
       <span class="inst"><sup>1</sup>ByteDance</span> &nbsp;&nbsp; <span class="inst"><sup>2</sup>The University of Hong Kong</span> &nbsp;&nbsp; <span class="inst"><sup>3</sup>University of Science and Technology of China</span>
     </div>
-    <div class="hero__notes"><sup class="dag">*</sup> Work done during internship at ByteDance. &nbsp; <sup class="dag">†</sup> Project Lead. &nbsp; Correspondence: xinting@ustc.edu.cn, xjqi@hku.hk</div>
+    <div class="hero__notes"><sup class="dag">*</sup> Work done during an internship at ByteDance. &nbsp; <sup class="dag">†</sup> Project lead. &nbsp; Correspondence: xinting@ustc.edu.cn, xjqi@hku.hk</div>
 
     <div class="hero__actions">
       <a class="btn btn--primary" href="https://arxiv.org/pdf/2605.30325" target="_blank" rel="noopener">
@@ -85,13 +85,13 @@
   <div class="wrap">
     <div class="race reveal" id="speedRace">
       <div class="race__head-row">
-        <div class="race__title">Watch the 5.1× speedup — a 720P · 241-frame generation, denoised live</div>
+        <div class="race__title">720P · 241 frames · Waver-T2V-12B: Full Attention vs. Veda</div>
         <button class="race__replay" type="button"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 1 0 3-6.7L3 8"/><path d="M3 3v5h5"/></svg> Replay</button>
       </div>
       <div class="race__rows">
         <div class="race__row" data-dur="12.2" data-target="19.4" data-video="static/videos/race/race_full.mp4">
           <div class="race__meta">
-            <span class="race__name"><span class="led"></span> Full Attention · FA3</span>
+            <span class="race__name"><span class="led"></span> Full Attention · FlashAttention-3</span>
             <span class="race__time"><span class="v">0.0</span><span class="u">min</span></span>
           </div>
           <div class="race__lane">
@@ -106,7 +106,7 @@
         </div>
         <div class="race__row race__row--veda" data-dur="2.4" data-target="3.8" data-video="static/videos/race/race_veda.mp4">
           <div class="race__meta">
-            <span class="race__name"><span class="led"></span> Veda · Ours <span style="color:var(--ink-mute)">95% sparse</span></span>
+            <span class="race__name"><span class="led"></span> Veda · Ours <span style="color:var(--ink-mute)">95% sparsity</span></span>
             <span class="race__time"><span class="v">0.0</span><span class="u">min</span></span>
           </div>
           <div class="race__lane">
@@ -121,26 +121,26 @@
         </div>
       </div>
       <div class="race__foot">
-        <span class="race__chip"><b>5.1×</b> faster end-to-end</span>
+        <span class="race__chip"><b>5.1×</b> end-to-end acceleration</span>
         <span class="race__chip">19.4 min&nbsp;→&nbsp;<b style="color:var(--ink);-webkit-text-fill-color:var(--ink)">3.8 min</b></span>
-        <span class="race__chip">95% sparsity · identical quality</span>
+        <span class="race__chip">95% sparsity · quality preserved</span>
       </div>
     </div>
 
     <div class="split split--wR" style="margin-top:40px">
       <div class="split__body">
-        <div class="eyebrow">Why it scales</div>
-        <h3 class="split__title">Quadratic cost, removed</h3>
+        <div class="eyebrow">Empirical Scaling</div>
+        <h3 class="split__title">Near-linear latency beyond 200K tokens</h3>
         <ul class="split__list">
-          <li>Full attention is <b>O(n²)</b> — Veda stays <b>near-linear</b>.</li>
-          <li>At 245K tokens: <b>1576&nbsp;ms → 309&nbsp;ms</b> per layer.</li>
-          <li>The gap <b>grows with length</b>.</li>
+          <li>Full attention: <b>O(N²)</b> over spatiotemporal tokens.</li>
+          <li>Veda: hardware-aligned <b>Top-k tile skipping</b>.</li>
+          <li>245K tokens: <b>1576&nbsp;ms → 309&nbsp;ms</b> per layer.</li>
         </ul>
       </div>
       <div class="split__media">
         <figure class="fig reveal">
           <div class="fig__media fig--pad"><div class="chart" data-chart="scaling"></div></div>
-          <figcaption class="fig__cap"><span class="tag">Scaling</span>Per-layer latency vs. sequence length. Full attention follows the <b>O(n²)</b> reference; Veda stays near-linear, reaching a <b>5.1×</b> gap at 245K tokens.</figcaption>
+          <figcaption class="fig__cap"><span class="tag">Scaling</span>Per-layer latency as sequence length grows. Full attention follows the <b>O(N²)</b> reference; Veda tracks a near-linear trend and reaches a <b>5.1×</b> gap at 245K tokens.</figcaption>
         </figure>
       </div>
     </div>
@@ -152,20 +152,20 @@
   <div class="wrap">
     <div class="split split--wL" style="margin-bottom:34px">
       <div class="split__body">
-        <div class="eyebrow">What is Veda</div>
-        <h2 class="split__title">Distill full attention — then skip the rest</h2>
+        <div class="eyebrow">Approach</div>
+        <h2 class="split__title">Tile-wise distillation of full attention</h2>
         <ul class="split__list">
-          <li><b>Distill</b> the tile-wise structure full attention relies on.</li>
-          <li>Quality holds at <b>extreme sparsity</b>.</li>
-          <li>Drop-in · Waver &amp; Wan2.1 · tile-skipping kernel = real speed.</li>
+          <li><b>Teacher:</b> max-pooled full-attention tile scores.</li>
+          <li><b>Estimator:</b> TripPool statistics with head-specific Q/K projections.</li>
+          <li><b>Execution:</b> Top-k tile selection plus a Hopper tile-skipping kernel.</li>
         </ul>
       </div>
       <div class="split__media">
         <div class="stats" style="grid-template-columns:1fr 1fr">
-          <div class="stat reveal"><div class="stat__num"><span data-count="5.1" data-dec="1">5.1</span><span class="u">×</span></div><div class="stat__label"><b>End-to-end speedup</b><br>720P · 241f · 12B</div></div>
-          <div class="stat reveal"><div class="stat__num"><span data-count="10.5" data-dec="1">10.5</span><span class="u">×</span></div><div class="stat__label"><b>Self-attention speedup</b><br>vs. FlashAttention-3</div></div>
-          <div class="stat reveal"><div class="stat__num"><span data-count="90" data-dec="0">90</span><span class="u">%</span></div><div class="stat__label"><b>Sparsity at parity</b><br>vs. full attention</div></div>
-          <div class="stat reveal"><div class="stat__num">92<span class="u">→</span>50<span class="u">%</span></div><div class="stat__label"><b>Attention overhead</b><br>reduced</div></div>
+          <div class="stat reveal"><div class="stat__num"><span data-count="5.1" data-dec="1">5.1</span><span class="u">×</span></div><div class="stat__label"><b>End-to-end acceleration</b><br>Waver-T2V-12B · 720P · 241f</div></div>
+          <div class="stat reveal"><div class="stat__num"><span data-count="10.5" data-dec="1">10.5</span><span class="u">×</span></div><div class="stat__label"><b>Self-attention acceleration</b><br>vs. FlashAttention-3</div></div>
+          <!-- <div class="stat reveal"><div class="stat__num"><span data-count="90" data-dec="0">90</span><span class="u">%</span></div><div class="stat__label"><b>Quality-preserving sparsity</b><br>human parity vs. full attention</div></div>
+          <div class="stat reveal"><div class="stat__num">92<span class="u">→</span>50<span class="u">%</span></div><div class="stat__label"><b>Attention share</b><br>per-layer overhead reduced</div></div> -->
         </div>
       </div>
     </div>
@@ -347,27 +347,27 @@
         <text class="caption" x="829" y="445">Veda (Ours)</text>
       </svg></div></div></div>
       </div>
-      <figcaption class="fig__cap"><span class="tag">Architecture</span>Veda vs. static patterns (<b>SVG</b>) and implicitly-learned masks (<b>VSA</b>). Solid lines are inference data-flow; dashed lines are training-only. <i>Hover a component card below — or any block — to highlight matching stages.</i></figcaption>
+      <figcaption class="fig__cap"><span class="tag">Architecture</span>Veda compared with static sparse patterns (<b>SVG</b>) and implicitly learned dynamic masks (<b>VSA</b>). Solid lines denote inference data flow; dashed lines denote training-only supervision. <i>Hover a component card below, or any block in the diagram, to highlight the corresponding stages.</i></figcaption>
     </figure>
 
     <div class="components">
       <div class="component reveal" data-arch="vd-attn vd-maxpool vd-loss vd-triplet vd-qk vd-block vd-topk vl-attn-maxpool vl-maxpool-loss vl-triplet-qk vl-qk-block vl-block-topk vl-block-grad vl-gradflow vl-gradtext" tabindex="0">
         <div class="component__ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 3v18M3 12h18"/></svg></div>
         <div class="component__n">Component 01</div>
-        <h3 class="component__t">Distilled Tile Scoring</h3>
-        <p class="component__b">Reconstruct <b>max-pooled full-attention</b> scores via <b>triplet pooling</b> (avg·max·min) + a KL distillation loss. Tile selection becomes an explicit, supervised target.</p>
+        <h3 class="component__t">Full-Attention Tile Distillation</h3>
+        <p class="component__b">Tile selection as supervised ranking: max-pooled full attention provides target scores, and a KL objective aligns the predicted per-query distribution.</p>
       </div>
       <div class="component reveal" data-arch="vd-search vd-tile vl-search" tabindex="0">
         <div class="component__ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg></div>
         <div class="component__n">Component 02</div>
-        <h3 class="component__t">Head-Aware Tiling</h3>
-        <p class="component__b">Per-head tile shape (p<sub>t</sub>, p<sub>h</sub>, p<sub>w</sub>) picked by <b>offline search</b> minimizing reconstruction error — spatial vs. temporal heads tiled differently.</p>
+        <h3 class="component__t">Head-Conditioned Tile Geometry</h3>
+        <p class="component__b">Per-layer, per-head tile shape (p<sub>t</sub>, p<sub>h</sub>, p<sub>w</sub>) selected by offline search to minimize sparse-output error under a fixed hardware tile budget.</p>
       </div>
       <div class="component reveal" data-arch="vd-sparse" tabindex="0">
         <div class="component__ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 6h16M4 12h16M4 18h16"/><circle cx="8" cy="6" r="1.6" fill="currentColor"/><circle cx="16" cy="12" r="1.6" fill="currentColor"/><circle cx="10" cy="18" r="1.6" fill="currentColor"/></svg></div>
         <div class="component__n">Component 03</div>
-        <h3 class="component__t">Tile-Skipping Kernel</h3>
-        <p class="component__b">Hopper kernel (ThunderKittens): <b>TMA + warp specialization</b> gathers only selected tiles, hiding memory latency behind tensor-core math. <b>~80% of FA3 MFU</b>.</p>
+        <h3 class="component__t">Tile-Sparse Hopper Kernel</h3>
+        <p class="component__b">A ThunderKittens Hopper kernel fetches only selected K/V tiles via TMA and overlaps sparse gathers with WGMMA compute, reaching <b>~80% of FA3 MFU</b>.</p>
       </div>
     </div>
   </div>
@@ -376,23 +376,23 @@
 <!-- ========================= 3 · BENCHMARKS ========================= -->
 <section class="section" id="results">
   <div class="wrap">
-    <div class="eyebrow">Benchmarks</div>
-    <h2 class="section__title">Parity in quality, multiples in speed</h2>
-    <p class="section__sub">Human study + per-layer latency. <b>Hover any chart</b> for exact values.</p>
+    <div class="eyebrow">Evaluation</div>
+    <h2 class="section__title">Perceptual fidelity under practical acceleration</h2>
+    <p class="section__sub">Human preference, VBench, and Hopper latency under identical sparse-kernel infrastructure. <b>Hover any chart</b> for exact values.</p>
 
     <div class="split split--wR" style="margin-bottom:36px">
       <div class="split__body">
-        <div class="eyebrow">Human preference</div>
-        <h3 class="split__title">Indistinguishable at 90%, ahead of VSA at 95%</h3>
+        <div class="eyebrow">Perceptual Study</div>
+        <h3 class="split__title">Full-attention parity at 90% sparsity</h3>
         <ul class="split__list">
-          <li><b>90% sparsity = parity</b> with full attention (63% tie on motion).</li>
-          <li><b>95%</b> beats VSA@87.5%; crushes VSA@95% — <b>76% vs. 24%</b> visual.</li>
+          <li>Against Full Attention: near-even visual and prompt preferences; <b>63%</b> tie on motion.</li>
+          <li>Against VSA@95%: <b>76% vs. 24%</b> visual preference; <b>39% vs. 16%</b> overall preference.</li>
         </ul>
       </div>
       <div class="split__media">
         <figure class="fig reveal">
           <div class="fig__media fig--pad"><div class="chart" data-chart="humaneval"></div></div>
-          <figcaption class="fig__cap"><span class="tag">Human study</span>Win / tie / loss across four axes on Waver-bench 1.0 (Waver-T2V-1B, 480P).</figcaption>
+          <figcaption class="fig__cap"><span class="tag">Human study</span>Blinded side-by-side win / tie / loss across four axes on Waver-bench 1.0 (Waver-T2V-1B, 480P).</figcaption>
         </figure>
       </div>
     </div>
@@ -401,17 +401,17 @@
       <div class="split__media">
         <figure class="fig reveal">
           <div class="fig__media fig--pad" style="padding:clamp(18px,2.4vw,32px)"><div class="chart" data-chart="speedup"></div></div>
-          <figcaption class="fig__cap"><span class="tag">ms / layer</span>Full Attention vs. Veda — MLP · mask&nbsp;prep · attention&nbsp;kernel.</figcaption>
+          <figcaption class="fig__cap"><span class="tag">ms / layer</span>Full Attention vs. Veda, including MLP, sparse-mask preparation, and the attention kernel.</figcaption>
         </figure>
       </div>
       <div class="split__body">
-        <div class="eyebrow">Wall-clock latency · Hopper</div>
-        <h3 class="split__title">Attention overhead, collapsed</h3>
-        <p class="split__text">Per-layer latency vs. FlashAttention-3 at 720P &amp; 480P, on both backbones. The <b>shorter Veda bar is the time</b>; the <b>badge is the speed-up</b>.</p>
+        <div class="eyebrow">Inference Latency · Hopper</div>
+        <h3 class="split__title">Sparse attention shifts the runtime bottleneck</h3>
+        <p class="split__text">Per-layer latency against FlashAttention-3 at 720P and 480P across Waver-T2V and Wan2.1. Sparse-mask preparation is included.</p>
         <ul class="split__list">
-          <li>Waver-T2V <b>315 → 78 ms</b> · 4.03×.</li>
-          <li>Wan2.1 <b>584 → 221 ms</b> · 2.64×.</li>
-          <li>Attention share of compute <b>92% → 50%</b>.</li>
+          <li>Waver-T2V 720P: <b>315 → 78 ms</b> per layer · 4.03×.</li>
+          <li>Wan2.1 720P: <b>584 → 221 ms</b> per layer · 2.64×.</li>
+          <li>Attention share of compute: <b>92% → 50%</b>.</li>
         </ul>
       </div>
     </div>
@@ -422,13 +422,13 @@
 <!-- ========================= 4 · VIDEOS ========================= -->
 <section class="section" id="videos">
   <div class="wrap">
-    <div class="eyebrow">Video Showcase · Drag to Compare</div>
-    <h2 class="section__title">Full Attention vs. Veda — same prompt, same seed</h2>
-    <p class="section__sub"><b>Drag</b> the handle · <b>pick a clip</b> below · left = FlashAttention-3 · right = Veda sparse.</p>
+    <div class="eyebrow">Qualitative Comparison</div>
+    <h2 class="section__title">Matched prompts and seeds</h2>
+    <p class="section__sub">Left: FlashAttention-3. Right: Veda sparse attention. <b>Drag</b> the handle; <b>switch clips</b> below.</p>
     <div class="cviewer reveal" id="cmp-viewer"><!-- comparison viewer injected from manifest --></div>
 
-    <h3 class="section__title" style="font-size:clamp(20px,2.2vw,26px);margin-top:52px">More samples — click to enlarge</h3>
-    <p class="section__sub">All generated by Veda · hover to play · <b>click any clip</b> to expand.</p>
+    <h3 class="section__title" style="font-size:clamp(20px,2.2vw,26px);margin-top:52px">High-sparsity generations with Veda</h3>
+    <p class="section__sub">Generated by Veda. Hover to play; <b>click any clip</b> to enlarge.</p>
     <div class="marquee reveal" id="sample-marquee"><!-- sample marquee injected from manifest --></div>
   </div>
 </section>
@@ -436,14 +436,14 @@
 <!-- ========================= 5 · ANALYSIS ========================= -->
 <section class="section" id="analysis">
   <div class="wrap">
-    <div class="eyebrow">Analysis · Where the idea comes from</div>
-    <h2 class="section__title">What makes a good sparse model?</h2>
-    <p class="section__sub">What actually breaks sparse attention at high sparsity — and how Veda fixes it.</p>
+    <div class="eyebrow">Mechanistic Analysis</div>
+    <h2 class="section__title">When does sparse attention preserve video structure?</h2>
+    <p class="section__sub">The central question is not how many tiles can be removed, but whether the retained tile mask preserves the full-attention ranking that controls the softmax distribution.</p>
 
     <!-- 01 · symptom -->
-    <div class="eyebrow" style="margin-top:8px">01 · The symptom</div>
-    <h3 class="split__title" style="margin:0 0 10px">Structural artifacts emerge at high sparsity</h3>
-    <p class="section__sub" style="margin-bottom:18px">Push sparsity past ~90% and prior methods don't merely lose detail — they develop a <b>distinct class of structural artifacts</b>: water-ripple warping that swims across surfaces, local geometric distortion, and temporal flicker between frames. These are qualitatively different from a dense model's semantic mistakes, and they are exactly what make naïve sparsity unusable for video.</p>
+    <div class="eyebrow" style="margin-top:8px">01 · Empirical Failure Mode</div>
+    <h3 class="split__title" style="margin:0 0 10px">Structural artifacts indicate mask-induced connectivity errors</h3>
+    <p class="section__sub" style="margin-bottom:18px">When sparsity exceeds the moderate regime, prior sparse-attention methods do not simply lose texture or prompt fidelity. They produce a distinct failure mode: water-ripple warping across surfaces, local geometric distortion, and temporal flicker between adjacent frames. These artifacts indicate broken spatiotemporal connectivity in the attention graph, rather than ordinary semantic hallucination from the dense generator.</p>
     <figure class="fig reveal">
       <div class="fig__media fig--pad">
         <div class="quad quad--3">
@@ -452,13 +452,13 @@
           <div class="quad__item quad__item--bad"><video class="quad__v" data-src="static/videos/analysis/artifact_3.mp4" poster="static/posters/analysis/artifact_3.webp" muted loop playsinline preload="none"></video></div>
         </div>
       </div>
-      <figcaption class="fig__cap">Pooling-based masks produce <b>water-ripple distortions &amp; temporal flicker</b> — structural failures, not ordinary generation noise.</figcaption>
+      <figcaption class="fig__cap">Pooling-based masks produce <b>water-ripple distortions and temporal flicker</b>, revealing structural failures in sparse token connectivity.</figcaption>
     </figure>
 
     <!-- 02 · cause -->
-    <div class="eyebrow" style="margin-top:42px">02 · The cause</div>
-    <h3 class="split__title" style="margin:0 0 10px">Mask quality — not the sparsity ratio — decides</h3>
-    <p class="section__sub" style="margin-bottom:18px">We isolate the cause with a controlled study: at one fixed 90% budget we change <b>only the mask</b>. An <b>Oracle</b> mask — the true Top-k tiles read from full attention — preserves fidelity, while an average-pooling estimate collapses. So the bottleneck is not the sparsity ratio but <b>how well the mask matches the tile-wise geometry of full attention</b>. A simple tile-recall metric makes this concrete — Veda recovers <b>66.4%</b> of the oracle's tiles vs. average pooling's 34.2%, and higher recall tracks artifact-free output.</p>
+    <div class="eyebrow" style="margin-top:42px">02 · Controlled Mask Intervention</div>
+    <h3 class="split__title" style="margin:0 0 10px">Tile ranking, rather than sparsity alone, determines fidelity</h3>
+    <p class="section__sub" style="margin-bottom:18px">To separate sparsity from mask quality, we hold the budget fixed at 90% sparsity and change only the selected tile mask. The Oracle mask, obtained by max-pooling the full-attention map and retaining the Top-k key tiles for each query tile, preserves high-fidelity structure. Average pooling, under the same budget, fails. This controlled comparison shows that degradation is governed by alignment with the tile-wise full-attention ranking. Tile recall makes the gap measurable: Veda recovers <b>66.4%</b> of oracle-selected tiles, whereas average pooling recovers <b>34.2%</b>.</p>
     <figure class="fig reveal">
       <div class="fig__media fig--pad">
         <div class="quad">
@@ -468,7 +468,7 @@
           <div class="quad__item quad__item--ours"><span class="quad__tag">Veda · Ours</span><video class="quad__v" data-src="static/videos/analysis/mask_veda.mp4" poster="static/posters/analysis/mask.webp" muted loop playsinline preload="none"></video></div>
         </div>
       </div>
-      <figcaption class="fig__cap">Same 90% budget. Full Attention, the Oracle, and <b>Veda stay clean</b>; Average Pooling drifts off the attention geometry &amp; breaks — Veda recovers <b>66.4% tile recall</b> vs. average pooling's 34.2%.</figcaption>
+      <figcaption class="fig__cap">Same 90% sparsity budget. Full Attention, Oracle, and <b>Veda</b> preserve structure; Average Pooling drifts away from the full-attention geometry. Tile recall: <b>66.4%</b> for Veda vs. 34.2% for average pooling.</figcaption>
     </figure>
 
     <!-- 03 · the fix (text ↔ image, alternating) -->
@@ -479,70 +479,81 @@
         </figure>
       </div>
       <div class="split__body">
-        <div class="eyebrow">03 · Heads are heterogeneous</div>
-        <h3 class="split__title">One tiling can't fit all heads</h3>
-        <p class="split__text">Attention heads in video DiTs are strongly heterogeneous: some capture local spatial structure, others model long-range temporal dependencies — and the pattern <b>drifts across diffusion timesteps</b>. A single uniform tiling therefore under-aggregates some heads and over-aggregates others, eroding tile recall exactly where it matters.</p>
+        <div class="eyebrow">03 · Head-Dependent Attention Geometry</div>
+        <h3 class="split__title">Uniform tiling misaligns heterogeneous heads</h3>
+        <p class="split__text">Video DiT heads are not exchangeable. Some heads concentrate on local spatial structure, while others connect temporally distant regions; these patterns also evolve across diffusion timesteps. A uniform tile layout can split high-affinity neighborhoods for one head and merge unrelated tokens for another, increasing intra-tile variance and reducing oracle-mask recall.</p>
       </div>
     </div>
     <div class="split split--wR" style="margin-top:24px">
       <div class="split__body">
-        <div class="eyebrow">The fix · head-aware tiling</div>
-        <h3 class="split__title">Adapt the tile shape per head</h3>
+        <div class="eyebrow">Head-Aware Tile Search</div>
+        <h3 class="split__title">Optimized tile factorizations under a fixed hardware budget</h3>
         <ul class="split__list">
-          <li>Static tilings <b>regress</b>; head-aware is <b>positive on every axis</b>.</li>
-          <li><b>+9.5% Overall</b> · <b>+7.2% Motion</b> vs. best static <code style="font-family:var(--font-mono);font-size:.9em">[4,4,8]</code>.</li>
+          <li>Candidate factorizations satisfy <b>p<sub>t</sub>p<sub>h</sub>p<sub>w</sub> = B</b>, preserving the hardware tile size.</li>
+          <li>For each layer and head, Veda selects the tiling that minimizes <b>||O<sup>fu</sup> − O<sup>sp</sup>(π)||<sub>F</sub><sup>2</sup></b> on calibration samples.</li>
+          <li>Net human preference over the best static tiling <code style="font-family:var(--font-mono);font-size:.9em">[4,4,8]</code>: <b>+9.5% Overall</b>, <b>+7.2% Motion</b>.</li>
         </ul>
       </div>
       <div class="split__media">
         <figure class="fig reveal">
           <div class="fig__media fig--pad"><div class="chart" data-chart="ablation"></div></div>
-          <figcaption class="fig__cap"><span class="tag">Ablation</span>Net human-preference win-rate vs. the best static tiling.</figcaption>
+          <figcaption class="fig__cap"><span class="tag">Ablation</span>Net human-preference win rate against the strongest static tiling baseline.</figcaption>
         </figure>
       </div>
     </div>
 
     <!-- THEORY (full discussion) -->
     <div style="margin-top:58px">
-      <div class="eyebrow">Why It Works · Theory</div>
-      <h2 class="section__title">The derivation, step by step</h2>
-      <p class="section__sub">A complete, self-contained argument for why <b>distillation</b> — not heavier pruning — is the right lever.</p>
+      <div class="eyebrow">Theoretical Rationale</div>
+      <h2 class="section__title">Sufficient conditions for stable tile sparsification</h2>
+      <p class="section__sub">The following derivation connects the observed artifacts to the mathematical requirements of stable high-sparsity attention.</p>
 
       <div class="deriv">
         <div class="deriv__step reveal">
           <div class="deriv__num">1</div>
           <div class="deriv__card">
-            <div class="deriv__lead">Energy-based view · why errors explode</div>
-            <h3 class="deriv__t">Mask errors are amplified, not averaged</h3>
-            <p class="deriv__text">Self-attention is an energy-based model: the softmax over logits <i>u<sub>j</sub> = q·k<sub>j</sub></i> is the gradient of a Log-Sum-Exp potential <i>Ψ(u)=τ·log Σ exp(u<sub>j</sub>/τ)</i>, which is <b>dominated by its largest term</b>. If a sparse mask drops the dominant key, the surviving mass is renormalized — every kept probability is multiplied by <i>Z/Ẑ &gt; 1</i>, so confidence is inflated and re-assigned to noise. Because softmax is non-linear, the error is <b>amplified, not averaged away</b> — a <i>structural hallucination</i>. Faithfully recovering the oracle Top-k is therefore a <b>prerequisite</b> for stability at high sparsity, not a refinement.</p>
+            <div class="deriv__lead">Softmax Geometry</div>
+            <h3 class="deriv__t">Missing high-energy keys induces distributional shift</h3>
+            <p class="deriv__text">For one query, attention is the gradient of a Log-Sum-Exp potential over logits <i>u<sub>j</sub> = q·k<sub>j</sub></i>. Because this potential is dominated by high-energy keys, dropping a dominant key changes the normalization constant rather than adding a small local perturbation. The remaining keys are renormalized by <i>Z/Ẑ &gt; 1</i>, so probability mass is reassigned to lower-energy or irrelevant tokens. At video scale, this produces coherent structural errors: the sparse model follows the wrong connectivity graph with high confidence.</p>
             <code class="eq">Ψ(u)=τ·log Σ<sub>j</sub> exp(u<sub>j</sub>/τ) &nbsp;⟹&nbsp; P̃<sub>j</sub> = (Z / Ẑ) · P<sub>j</sub> &gt; P<sub>j</sub></code>
-            <div class="deriv__arrow">↓ so we must estimate the Q·K ranking accurately — and cheaply</div>
+            <div class="deriv__arrow">↓ therefore, sparse attention first needs accurate recovery of the full-attention Top-k ranking</div>
           </div>
         </div>
         <div class="deriv__step reveal">
           <div class="deriv__num">2</div>
           <div class="deriv__card">
-            <div class="deriv__lead">Sufficient statistics · why a mean is not enough</div>
-            <h3 class="deriv__t">Triplet pooling reconstructs the dot product</h3>
-            <p class="deriv__text">A tile score must be estimated from a few pooled statistics. A single <b>mean</b> (average pooling) is provably insufficient: the dot product decomposes into a centroid term plus a covariance term, and pooling to the mean <b>discards the covariance</b> — mean-similar tiles become indistinguishable and the score matrix loses rank. We restore the missing second-order term with extrema: by the <b>Bhatia–Davis</b> inequality the variance of a bounded variable obeys <i>σ² ≤ (M−μ)(μ−m)</i>, so the triplet <b>{avg, max, min}</b> is a bounding box that pins down each tile's spread — enough to reconstruct the score at negligible extra I/O.</p>
+            <div class="deriv__lead">Tile Statistics</div>
+            <h3 class="deriv__t">Mean pooling discards second-order score information</h3>
+            <p class="deriv__text">A tile score must be estimated from compressed query and key representations. Average pooling preserves only the centroid. However, the dot product decomposes into a mean-product term and a covariance term; two tiles with similar means can still have different high-frequency structure and therefore different attention scores. Veda augments the mean with extrema. By the Bhatia-Davis inequality, the variance of a bounded variable is controlled by its mean, maximum, and minimum, so <b>{avg, max, min}</b> provides a compact estimate of both centroid and spread.</p>
             <code class="eq"><i>q·k</i> = d·μ<sub>q</sub>μ<sub>k</sub> + d·Cov(<i>q,k</i>) &nbsp;·&nbsp; σ² ≤ (M−μ)(μ−m)</code>
-            <div class="deriv__arrow">↓ but this bound is only tight when a tile's tokens are similar</div>
+            <div class="deriv__arrow">↓ this estimator is reliable only when tokens within each tile have low variance</div>
           </div>
         </div>
         <div class="deriv__step reveal">
           <div class="deriv__num">3</div>
           <div class="deriv__card">
-            <div class="deriv__lead">Bandwidth minimization · why tiling must adapt</div>
-            <h3 class="deriv__t">Head-aware tiling minimizes intra-tile variance</h3>
-            <p class="deriv__text">The neglected residual interaction inside a tile is bounded (Cauchy–Schwarz) by <i>E ≤ B·σ<sub>q</sub>·σ<sub>k</sub></i>, so the estimate degrades as intra-tile variance grows — a tile's tokens must be <b>similar</b>. Under 3D RoPE, tokens lie on a spatio-temporal manifold where affinity decays with geodesic distance; a naïve raster tiling scatters temporal neighbours and inflates variance. <b>Head-Aware Tiling</b> searches per-head factorizations <i>(p<sub>t</sub>, p<sub>h</sub>, p<sub>w</sub>)</i> that fold the manifold into memory while keeping high-affinity tokens together — minimizing attention <b>bandwidth</b>, and with it the variance that Step 2 depends on. The ablation above confirms the gain on every quality axis.</p>
+            <div class="deriv__lead">Tile Geometry</div>
+            <h3 class="deriv__t">Low-variance tiling tightens the approximation bound</h3>
+            <p class="deriv__text">Let each token be decomposed into a tile mean plus a residual. The score error induced by compressing a tile is bounded by the product of query- and key-side intra-tile standard deviations. Under 3D RoPE, video tokens lie on a spatiotemporal manifold, but different heads induce different anisotropic metrics on that manifold. A fixed raster layout can scatter high-affinity temporal neighbors or merge unrelated spatial regions. Head-Aware Tiling searches <i>(p<sub>t</sub>, p<sub>h</sub>, p<sub>w</sub>)</i> per head, minimizing the sparse-output error and reducing the variance term that controls score estimation.</p>
             <code class="eq"><i>E</i> = |Σ<sub>i</sub> ⟨r<sup>q</sup><sub>i</sub>, r<sup>k</sup><sub>i</sub>⟩| ≤ B · σ<sub>q</sub> · σ<sub>k</sub></code>
+            <div class="deriv__arrow">↓ with compact statistics and low-variance tiles, the remaining question is how to train the ranking before discrete Top-k</div>
+          </div>
+        </div>
+        <div class="deriv__step reveal">
+          <div class="deriv__num">4</div>
+          <div class="deriv__card">
+            <div class="deriv__lead">Distillation Objective</div>
+            <h3 class="deriv__t">KL alignment learns the pre-Top-k energy landscape</h3>
+            <p class="deriv__text">Top-k selection is discrete, but the ranking that induces it is continuous. Veda therefore supervises the estimator before thresholding: max-pooled full attention defines the target tile distribution, and the estimator produces a soft distribution over key tiles. Minimizing row-wise KL divergence aligns the probability geometry of the predicted scores with the full-attention teacher. Locally, KL is a Fisher-weighted quadratic form, so errors are penalized in the natural geometry of the simplex rather than in raw Euclidean score space. After this continuous alignment, Top-k selection can be applied as a hardware-executable binary mask.</p>
+            <code class="eq">L<sub>distill</sub> = D<sub>KL</sub>(A<sub>tgt</sub> || A<sub>pred</sub>) ≈ 1/2 · Δθ<sup>T</sup>I(θ)Δθ</code>
           </div>
         </div>
       </div>
       <div class="synthesis reveal">
         <div class="synthesis__ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2l2.6 7.2L22 9.6l-5.6 4.6L18.2 22 12 17.9 5.8 22l1.8-7.8L2 9.6l7.4-.4z"/></svg></div>
         <div>
-          <h4 class="synthesis__t">Putting it together</h4>
-          <p class="synthesis__b">Distill the <b>oracle ranking</b> (Step 1) using <b>sufficient statistics</b> (Step 2) under <b>variance-minimizing, head-aware tilings</b> (Step 3). Each piece is necessary — together they keep the tile mask aligned with full attention even at <b>95% sparsity</b>.</p>
+          <h4 class="synthesis__t">Design Implication</h4>
+          <p class="synthesis__b">Stable high-sparsity attention requires four aligned choices: preserve the oracle ranking, estimate tile scores with sufficient statistics, group tokens with head-aware low-variance tilings, and train the ranking through KL distillation before Top-k discretization. Veda combines these conditions so the sparse mask remains aligned with full attention even at <b>95% sparsity</b>.</p>
         </div>
       </div>
     </div>

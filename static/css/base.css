@@ -72,7 +72,7 @@ img{max-width:100%;display:block}
 .eyebrow::before{content:"";width:22px;height:1px;background:linear-gradient(90deg,var(--accent),transparent)}
 .section__title{font-family:var(--font-display);font-weight:600;letter-spacing:-.02em;
   font-size:clamp(27px,3.4vw,42px);line-height:1.08;margin:0 0 12px}
-.section__sub{color:var(--ink-soft);max-width:64ch;font-size:clamp(15px,1.4vw,17.5px);margin:0 0 30px}
+.section__sub{color:var(--ink-soft);max-width:128ch;font-size:clamp(15px,1.4vw,17.5px);margin:0 0 30px}
 .section__sub b{color:var(--ink)}
 
 /* ---------- scroll progress ---------- */
@@ -421,7 +421,7 @@ table.vbench tbody tr:hover{background:var(--panel-2)}
 @media(max-width:560px){.chart__legend{flex-wrap:wrap}}
 .chart__lg{display:inline-flex;align-items:center;gap:7px}
 .chart__lg i{width:12px;height:12px;border-radius:3px;display:inline-block;flex:none}
-.chart__tabs{display:flex;flex-wrap:wrap;align-items:center;gap:8px;padding:2px 2px 20px 14px}
+.chart__tabs{display:flex;flex-wrap:wrap;align-items:center;gap:8px;padding:10px 2px 20px 14px}
 .chart__tabs-label{font-family:var(--font-display);font-size:15px;font-weight:600;color:var(--ink);margin:0 10px 0 2px;white-space:nowrap}
 .chart__tab{font-family:var(--font-mono);font-size:12px;color:var(--ink-soft);border:1px solid var(--line-2);background:var(--panel);
   padding:7px 13px;border-radius:9px;cursor:pointer;transition:.2s;white-space:nowrap}
