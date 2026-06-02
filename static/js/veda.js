@@ -35,7 +35,7 @@
     const fig = document.createElement('figure');
     fig.className = 'cmp reveal';
     fig.setAttribute('role', 'group');
-    fig.setAttribute('aria-label', 'Before and after comparison: Full Attention versus Veda');
+    fig.setAttribute('aria-label', 'Side-by-side comparison: dense attention versus Veda');
 
     const stage = document.createElement('div');
     stage.className = 'cmp__stage';
@@ -61,7 +61,7 @@
     clip.appendChild(vFull);
 
     const labL = document.createElement('span');
-    labL.className = 'cmp__tag cmp__tag--l'; labL.textContent = 'Full Attention · FA3';
+    labL.className = 'cmp__tag cmp__tag--l'; labL.textContent = 'Dense FA3';
     const labR = document.createElement('span');
     labR.className = 'cmp__tag cmp__tag--r'; labR.textContent = 'Veda · 95% sparse';
 
@@ -208,8 +208,8 @@
     const vVeda = mkV('cmp__veda');
     const clip = document.createElement('div'); clip.className = 'cmp__clip';
     const vFull = mkV('cmp__full'); clip.appendChild(vFull);
-    const labL = document.createElement('span'); labL.className = 'cmp__tag cmp__tag--l'; labL.textContent = 'Full Attention';
-    const labR = document.createElement('span'); labR.className = 'cmp__tag cmp__tag--r'; labR.textContent = 'Veda · sparse';
+    const labL = document.createElement('span'); labL.className = 'cmp__tag cmp__tag--l'; labL.textContent = 'Dense FA3';
+    const labR = document.createElement('span'); labR.className = 'cmp__tag cmp__tag--r'; labR.textContent = 'Veda · distilled sparse';
     const handle = document.createElement('button'); handle.className = 'cmp__handle'; handle.type = 'button';
     handle.setAttribute('role', 'slider'); handle.setAttribute('aria-label', 'Drag to compare');
     handle.setAttribute('aria-valuemin', '0'); handle.setAttribute('aria-valuemax', '100'); handle.setAttribute('aria-valuenow', '50');
@@ -238,7 +238,7 @@
       vVeda.src = it.veda; vFull.src = it.full;
       [vVeda, vFull].forEach((v) => { const p = v.play(); if (p && p.catch) p.catch(() => {}); });
       const is12 = /12B/.test(it.subtitle || '');
-      badge.textContent = is12 ? 'Waver-T2V-12B · 720P · 95% sparse' : 'Waver-T2V-1B · 480P · 90% sparse';
+      badge.textContent = is12 ? 'Waver-T2V-12B · 720P · 95% sparsity' : 'Waver-T2V-1B · 480P · 90% sparsity';
       badge.className = 'cmp__model ' + (is12 ? 'cmp__model--12b' : 'cmp__model--1b');
       cap.dataset.prompt = it.title || '';
       cap.innerHTML = it.title ? `<span class="cviewer__prompt">${escapeHtml(it.title)}</span>` : '';

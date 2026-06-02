@@ -119,7 +119,7 @@
       el('circle', { cx: x, cy: yF, r: 5.5, fill: '#fff', stroke: cFA, 'stroke-width': 3, class: 'chart__dot' }, svg);
       el('circle', { cx: x, cy: yV, r: 5.5, fill: '#fff', stroke: cVe, 'stroke-width': 3, class: 'chart__dot' }, svg);
     });
-    legend(wrap, [['Full Attention (FA3)', c.full], ['Veda — Ours (95%)', c.veda]]);
+    legend(wrap, [['Dense FA3', cFA], ['Veda (95% sparse)', cVe]]);
   }
 
   /* --------------------------------------------------------------- SPEEDUP */
@@ -161,7 +161,7 @@
           rects.push(r); acc += w;
         });
       };
-      drawSeg(L, y + 18, BW, [{ v: d.full.mlp, tot: fullTot, c: c.mlp, n: 'MLP' }, { v: d.full.attn, tot: fullTot, c: c.full, n: 'Full Attn Kernel' }]);
+      drawSeg(L, y + 18, BW, [{ v: d.full.mlp, tot: fullTot, c: c.mlp, n: 'MLP' }, { v: d.full.attn, tot: fullTot, c: c.full, n: 'Dense Attn Kernel' }]);
       const vW = BW * (vedaTot / fullTot);
       drawSeg(L, y + 43, vW, [{ v: d.veda.mlp, tot: vedaTot, c: c.mlp, n: 'MLP' }, { v: d.veda.prep, tot: vedaTot, c: c.prep, n: 'Prepare Mask' }, { v: d.veda.kern, tot: vedaTot, c: c.veda, n: 'Sparse Kernel' }]);
       el('text', { x: L + BW + 5, y: y + 31, class: 'chart__msval' }, svg).textContent = fullTot.toFixed(0) + ' ms';
@@ -176,7 +176,7 @@
       rects.forEach((r, i) => { r.style.transition = `width .85s ${0.04 * i}s cubic-bezier(.2,.7,.2,1)`; r.setAttribute('width', r._w); });
       fades.forEach((e) => { e.style.transition = 'opacity .5s .6s'; e.setAttribute('opacity', '1'); });
     });
-    legend(wrap, [['MLP', c.mlp], ['Prepare Mask', c.prep], ['Sparse Kernel', c.veda], ['Full Attn Kernel', c.full]]);
+    legend(wrap, [['MLP', c.mlp], ['Prepare Mask', c.prep], ['Sparse Kernel', c.veda], ['Dense Attn Kernel', c.full]]);
   }
 
   /* ------------------------------------------------------------- ABLATION */
@@ -214,11 +214,11 @@
 
   /* ------------------------------------------------------------- HUMAN EVAL */
   const HE_GROUPS = [
-    { title: 'Veda 90% sparsity vs. Full Attention', short: 'Veda 90% / Full Attn', ours: 'Veda 90% better', base: 'Full Attention better', m: [[35, 35, 31], [19, 63, 18], [50, 1, 49], [32, 38, 30]] },
+    { title: 'Veda 90% sparsity vs. dense full attention on WaverBench1.0', short: 'Veda 90% / Dense', ours: 'Veda 90% preferred', base: 'Dense attention preferred', m: [[35, 35, 31], [19, 63, 18], [50, 1, 49], [32, 38, 30]] },
     { title: 'Veda 95% sparsity vs. VSA 87.5% sparsity', short: 'Veda 95% / VSA 87.5%', ours: 'Veda 95% better', base: 'VSA 87.5% better', m: [[25, 52, 24], [21, 59, 20], [54, 0, 46], [38, 31, 31]] },
     { title: 'Veda 95% sparsity vs. VSA 95% sparsity', short: 'Veda 95% / VSA 95%', ours: 'Veda 95% better', base: 'VSA 95% better', m: [[39, 45, 16], [35, 50, 15], [76, 0, 24], [40, 30, 30]] },
   ];
-  const HE_METRICS = ['Overall Quality', 'Motion Quality', 'Visual Quality', 'Prompt Following'];
+  const HE_METRICS = ['Overall Quality', 'Motion Quality', 'Visual Quality', 'Prompt Alignment'];
   function renderHumanEval(wrap) {
     const c = COL();
     const tabs = document.createElement('div'); tabs.className = 'chart__tabs';
@@ -260,7 +260,7 @@
       });
     }
     onVisible(wrap, () => draw(0));
-    legend(wrap, [['Veda better', c.veda], ['Tie', c.tie], ['Comparison method better', c.base]]);
+    legend(wrap, [['Veda preferred', c.veda], ['Tie', c.tie], ['Comparison method preferred', c.base]]);
   }
 
   /* ------------------------------------------------------------------ RADAR */
