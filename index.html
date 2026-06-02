@@ -136,6 +136,10 @@
           <li>Veda: hardware-aligned <b>Top-k tile skipping</b>.</li>
           <li>245K tokens: <b>1576&nbsp;ms → 309&nbsp;ms</b> per layer.</li>
         </ul>
+        <div class="stats" style="grid-template-columns:1fr 1fr;margin-top:22px">
+          <div class="stat reveal"><div class="stat__num"><span data-count="5.1" data-dec="1">5.1</span><span class="u">×</span></div><div class="stat__label"><b>End-to-end acceleration</b><br>Waver-T2V-12B · 720P · 241f</div></div>
+          <div class="stat reveal"><div class="stat__num"><span data-count="10.5" data-dec="1">10.5</span><span class="u">×</span></div><div class="stat__label"><b>Self-attention acceleration</b><br>vs. FlashAttention-3</div></div>
+        </div>
       </div>
       <div class="split__media">
         <figure class="fig reveal">
@@ -162,10 +166,8 @@
       </div>
       <div class="split__media">
         <div class="stats" style="grid-template-columns:1fr 1fr">
-          <div class="stat reveal"><div class="stat__num"><span data-count="5.1" data-dec="1">5.1</span><span class="u">×</span></div><div class="stat__label"><b>End-to-end acceleration</b><br>Waver-T2V-12B · 720P · 241f</div></div>
-          <div class="stat reveal"><div class="stat__num"><span data-count="10.5" data-dec="1">10.5</span><span class="u">×</span></div><div class="stat__label"><b>Self-attention acceleration</b><br>vs. FlashAttention-3</div></div>
-          <!-- <div class="stat reveal"><div class="stat__num"><span data-count="90" data-dec="0">90</span><span class="u">%</span></div><div class="stat__label"><b>Quality-preserving sparsity</b><br>human parity vs. full attention</div></div>
-          <div class="stat reveal"><div class="stat__num">92<span class="u">→</span>50<span class="u">%</span></div><div class="stat__label"><b>Attention share</b><br>per-layer overhead reduced</div></div> -->
+          <div class="stat reveal"><div class="stat__num"><span data-count="90" data-dec="0">90</span><span class="u">%</span></div><div class="stat__label"><b>Quality-preserving sparsity</b><br>human parity vs. full attention</div></div>
+          <div class="stat reveal"><div class="stat__num">92<span class="u">→</span>50<span class="u">%</span></div><div class="stat__label"><b>Attention share</b><br>per-layer overhead reduced</div></div>
         </div>
       </div>
     </div>

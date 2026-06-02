@@ -67,47 +67,57 @@
   ];
   function renderScaling(wrap) {
     const c = COL();
-    const W = 720, H = 440, m = { l: 64, r: 24, t: 28, b: 58 };
+    const W = 720, H = 500, m = { l: 66, r: 26, t: 30, b: 60 };
     const iw = W - m.l - m.r, ih = H - m.t - m.b;
+    const floorPad = 5, plotH = ih - floorPad;   // clear band below the 0-line; ↓ lowers the 0-baseline, ↑ raises it
     const svg = el('svg', { viewBox: `0 0 ${W} ${H}`, class: 'chart__svg', role: 'img', 'aria-label': 'Per-layer latency vs sequence length: full attention scales quadratically, Veda near-linearly.' }, wrap);
     const xs = SCALING.map((d) => d.seq);
     const xmin = xs[0] * 0.86, xmax = xs[xs.length - 1] * 1.04;
     const ymax = 1700;
     const X = (v) => m.l + (v - xmin) / (xmax - xmin) * iw;
-    const Y = (v) => m.t + ih - (v / ymax) * ih;
+    const Y = (v) => m.t + plotH - (v / ymax) * plotH;
+    const cFA = c.veda, cVe = c.full;             // swapped: Full Attention = teal, Veda = amber
     // grid + y ticks
     [0, 400, 800, 1200, 1600].forEach((v) => {
       el('line', { x1: m.l, y1: Y(v), x2: m.l + iw, y2: Y(v), stroke: c.grid, 'stroke-width': 1 }, svg);
       el('text', { x: m.l - 10, y: Y(v) + 4, 'text-anchor': 'end', class: 'chart__tk' }, svg).textContent = v;
     });
-    el('text', { x: 16, y: m.t + ih / 2, transform: `rotate(-90 16 ${m.t + ih / 2})`, 'text-anchor': 'middle', class: 'chart__ax' }, svg).textContent = 'Per-layer latency (ms)';
-    el('text', { x: m.l + iw / 2, y: H - 12, 'text-anchor': 'middle', class: 'chart__ax' }, svg).textContent = 'Sequence length (tokens)';
-    SCALING.forEach((d) => el('text', { x: X(d.seq), y: m.t + ih + 20, 'text-anchor': 'middle', class: 'chart__tk' }, svg).textContent = fmtK(d.seq));
-    // quadratic reference (faint) for FA3
-    const qd = [];
-    for (let i = 0; i <= 40; i++) { const n = xs[0] + (xs[2] - xs[0]) * i / 40; qd.push([X(n), Y(SCALING[0].fa3 * Math.pow(n / xs[0], 2))]); }
-    el('path', { d: 'M' + qd.map((p) => p.join(' ')).join(' L'), fill: 'none', stroke: c.full, 'stroke-width': 1.4, 'stroke-dasharray': '2 5', opacity: .5 }, svg);
-    el('text', { x: X(xs[2]) - 6, y: Y(1500), 'text-anchor': 'end', class: 'chart__tk', fill: c.full, opacity: .8 }, svg).textContent = 'O(n²) reference';
+    el('text', { x: 16, y: m.t + plotH / 2, transform: `rotate(-90 16 ${m.t + plotH / 2})`, 'text-anchor': 'middle', class: 'chart__ax' }, svg).textContent = 'Per-layer latency (ms)';
+    el('text', { x: m.l + iw / 2, y: H - 8, 'text-anchor': 'middle', class: 'chart__ax' }, svg).textContent = 'Sequence length (tokens)';
+    SCALING.forEach((d) => el('text', { x: X(d.seq), y: H - 30, 'text-anchor': 'middle', class: 'chart__tk' }, svg).textContent = fmtK(d.seq));
+    // theoretical references (anchored at full attention's first measured point)
+    const refV = SCALING[0].fa3, nRef = xs[0];
+    const refPath = (pow) => { const p = []; for (let i = 0; i <= 40; i++) { const n = xs[0] + (xs[2] - xs[0]) * i / 40; p.push([X(n), Y(refV * Math.pow(n / nRef, pow))]); } return 'M' + p.map((q) => q.join(' ')).join(' L'); };
+    el('path', { d: refPath(2), fill: 'none', stroke: c.mute, 'stroke-width': 1.4, 'stroke-dasharray': '2 5', opacity: .5 }, svg);
+    el('path', { d: refPath(1), fill: 'none', stroke: c.mute, 'stroke-width': 1.4, 'stroke-dasharray': '2 5', opacity: .38 }, svg);
+    const n2 = xs[0] + (xs[2] - xs[0]) * 0.46, n1 = xs[0] + (xs[2] - xs[0]) * 0.74;
+    el('text', { x: X(n2) - 8, y: Y(refV * Math.pow(n2 / nRef, 2)) - 7, 'text-anchor': 'end', class: 'chart__tk', fill: c.mute }, svg).textContent = 'O(n²) reference';
+    el('text', { x: X(n1) + 8, y: Y(refV * (n1 / nRef)) - 7, 'text-anchor': 'start', class: 'chart__tk', fill: c.mute }, svg).textContent = 'O(n) reference';
     // lines
-    const mk = (key, color, dash) => {
+    const mk = (key, color) => {
       const pts = SCALING.map((d) => [X(d.seq), Y(d[key])]);
       const path = el('path', { d: 'M' + pts.map((p) => p.join(' ')).join(' L'), fill: 'none', stroke: color, 'stroke-width': 3, 'stroke-linecap': 'round', 'stroke-linejoin': 'round' }, svg);
       if (!reduce) { const L = path.getTotalLength(); path.style.strokeDasharray = L; path.style.strokeDashoffset = L; path.style.transition = 'stroke-dashoffset 1.1s ease'; onVisible(wrap, () => { path.style.strokeDashoffset = '0'; }); }
       return pts;
     };
-    mk('fa3', c.full); mk('veda', c.veda);
-    // markers + interactions
-    SCALING.forEach((d) => {
-      [['fa3', c.full, 'Full Attention'], ['veda', c.veda, 'Veda (95% sparse)']].forEach(([k, color, name]) => {
-        const cx = X(d.seq), cy = Y(d[k]);
-        const dot = el('circle', { cx, cy, r: 5.5, fill: '#fff', stroke: color, 'stroke-width': 3, class: 'chart__dot' }, svg);
-        const hit = el('circle', { cx, cy, r: 16, fill: 'transparent', style: 'cursor:pointer' }, svg);
-        const sp = (d.fa3 / d.veda).toFixed(2);
-        hit.addEventListener('mouseenter', () => { dot.setAttribute('r', 7.5); showTip(wrap, `<b>${name}</b><span>${d.label} · ${fmtK(d.seq)} tok</span><span>${d[k].toFixed(1)} ms<em>· ${sp}× faster</em></span>`, cx, cy); });
-        hit.addEventListener('mouseleave', () => { dot.setAttribute('r', 5.5); hideTip(wrap); });
-      });
-      // speedup chip at veda point
-      el('text', { x: X(d.seq), y: Y(d.veda) + 26, 'text-anchor': 'middle', class: 'chart__chip', fill: c.accent2 }, svg).textContent = (d.fa3 / d.veda).toFixed(1) + '×';
+    mk('fa3', cFA); mk('veda', cVe);
+    // per-point ms labels (default) + always-on speed-up arrow (high → low) + ratio
+    SCALING.forEach((d, i) => {
+      const x = X(d.seq), yF = Y(d.fa3), yV = Y(d.veda);
+      if (i === SCALING.length - 1) {            // only annotate the largest point (5.1×)
+        const g = el('g', { class: 'scl__arrow' }, svg);
+        if (yV - yF > 28) {
+          el('line', { x1: x, y1: yF + 9, x2: x, y2: yV - 12, stroke: c.accent2, 'stroke-width': 1.8 }, g);
+          el('path', { d: `M${x - 4} ${yV - 18} L${x} ${yV - 10} L${x + 4} ${yV - 18}`, fill: 'none', stroke: c.accent2, 'stroke-width': 1.8, 'stroke-linecap': 'round', 'stroke-linejoin': 'round' }, g);
+          el('text', { x: x + 9, y: (yF + yV) / 2 + 5, 'text-anchor': 'start', class: 'scl__ratio', fill: c.accent2 }, g).textContent = (d.fa3 / d.veda).toFixed(1) + '×';
+        } else {
+          el('text', { x: x + 12, y: yV + 4, 'text-anchor': 'start', class: 'scl__ratio', fill: c.accent2 }, g).textContent = (d.fa3 / d.veda).toFixed(1) + '×';
+        }
+      }
+      el('text', { x, y: yF - 10, 'text-anchor': 'middle', class: 'chart__msval', fill: cFA }, svg).textContent = d.fa3.toFixed(0) + ' ms';
+      el('text', { x, y: yV + 20, 'text-anchor': 'middle', class: 'chart__msval', fill: cVe }, svg).textContent = d.veda.toFixed(0) + ' ms';
+      el('circle', { cx: x, cy: yF, r: 5.5, fill: '#fff', stroke: cFA, 'stroke-width': 3, class: 'chart__dot' }, svg);
+      el('circle', { cx: x, cy: yV, r: 5.5, fill: '#fff', stroke: cVe, 'stroke-width': 3, class: 'chart__dot' }, svg);
     });
     legend(wrap, [['Full Attention (FA3)', c.full], ['Veda — Ours (95%)', c.veda]]);
   }
