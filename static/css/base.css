@@ -111,7 +111,7 @@ img{max-width:100%;display:block}
 .btn svg{width:17px;height:17px;opacity:.92}
 .btn:hover{transform:translateY(-2px);border-color:color-mix(in srgb,var(--accent) 50%,transparent);background:var(--panel)}
 .btn--primary{color:var(--primary-ink);border:none;background:var(--primary-bg);box-shadow:var(--shadow-1)}
-.btn--primary:hover{filter:brightness(1.08);box-shadow:var(--shadow-2)}
+.btn--primary:hover{background:var(--primary-bg);filter:brightness(1.08);box-shadow:var(--shadow-2)}
 
 /* ---------- hero ---------- */
 .hero{position:relative;z-index:2;padding:clamp(54px,9vw,104px) 0 22px;text-align:var(--hero-align)}
